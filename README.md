@@ -8,14 +8,17 @@ Role Variables
 
 
 ### Required Variables
-`rails_app_name: myapp`
+These must be defined in your playbook for this role to work.
+
+`rails_app_name: myapp` # Name of your app which will define the install directory, app user, and more
+
 `rails_app_prod_secret: EXTREMELY_LONG_SECRET_VALUE`
 
 ### Optional Variables
 
 | variable  | default value  | description  |
 |---|---|---|
-| `is_blacklight_app` | false |   |
+| `is_blacklight_app` | false | If this is a blacklight app, then it does some Blacklight specific things  |
 | `rails_app_use_ssl` | false   |  Set to true to create ssl virtual hosts and add certificates|
 |`rails_app_user`   |  {{ rails_app_name }} |  The user that runs the app, under whose account rbenv is installed |
 | `rails_app_git_branch` | master |   |
