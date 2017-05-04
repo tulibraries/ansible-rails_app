@@ -36,5 +36,5 @@
   yum:
     name: "{{ item }}"
     state: present
-  with_items: "{{ app_package_dependencies |default([]) }}"
+  with_items: "{{ rails_app_additional_dependencies }}"
   become: yes

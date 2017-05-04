@@ -1,5 +1,11 @@
 ---
 
+
+## dependencies.yml
+#default to no app specific dependencies to install
+rails_app_additional_dependencies: []
+
+
 rails_app_user: "{{ rails_app_name }}"
 rails_app_git_branch: master
 rails_app_install_path: /var/www/{{ rails_app_name }}
@@ -7,6 +13,10 @@ rails_app_ruby_path: /home/{{ rails_app_user }}/.rbenv/versions/{{ rbenv.default
 rails_app_bundle_exe: "{{rails_app_ruby_path}}/bin/bundle"
 rails_app_gem_path: "{{rails_app_ruby_path}}/lib/ruby/gems"
 rails_app_url_base_path: "/"
+
+# Override to add custom config files from templates
+rails_app_additional_config: []
+
 
 rails_app_env: production
 rails_app_deployment_exclude_groups:
@@ -23,6 +33,3 @@ app_ssl_intermediate_path: "{{ app_certs_base_path }}/certs/intermediate.crt"
 app_use_intermediate_cert: true
 
 app_set_root_redirect: false
-
-#default to no app specific dependencies to install
-app_package_dependencies: []

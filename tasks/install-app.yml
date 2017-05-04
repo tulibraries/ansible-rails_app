@@ -51,6 +51,18 @@
   tags:
     - rails_app
 
+- name: Add additional rails configuration files
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ rails_app_install_path }}/config/{{item}}"
+  with_items: "{{ rails_app_additional_config }}"
+  become_user: "{{ app_user }}"
+  notify:
+    - restart passenger app
+  tags:
+    - rails_app
+
+
 
 - name: Trigger deploy tasks if vendor/bundle does not exist
   stat:

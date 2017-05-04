@@ -12,12 +12,15 @@ These must be defined in your playbook for this role to work.
 
 `rails_app_name: myapp` # Name of your app which will define the install directory, app user, and more
 
-`rails_app_prod_secret: EXTREMELY_LONG_SECRET_VALUE`
+`rails_app_git_url` # URL to the public github repo where you app can be found
+
+`rails_app_prod_secret: EXTREMELY_LONG_SECRET_VALUE` # This should be vaulted.
 
 ### Optional Variables
 
 | variable  | default value  | description  |
 |---|---|---|
+| `rails_app_url_base_path` | "/" | The url path where the application will be served  |
 | `is_blacklight_app` | false | If this is a blacklight app, then it does some Blacklight specific things  |
 | `rails_app_use_ssl` | false   |  Set to true to create ssl virtual hosts and add certificates|
 |`rails_app_user`   |  {{ rails_app_name }} |  The user that runs the app, under whose account rbenv is installed |
@@ -26,7 +29,6 @@ These must be defined in your playbook for this role to work.
 | `rails_app_ruby_path` | /home/{{ rails_app_user }}/.rbenv/versions/{{ rbenv.default_ruby}} |   |
 | `rails_app_bundle_exe` | "{{rails_app_ruby_path}}/bin/bundle" |   |
 | `rails_app_gem_path` | "{{rails_app_ruby_path}}/lib/ruby/gems" |   |
-| `rails_app_url_base_path` | "/" | The url path where the application will be served  |
 | `rails_app_env` | production |   |
 | `rails_app_deployment_exclude_groups`: [test, development] | |
 
@@ -48,7 +50,7 @@ Including an example of how to use your role (for instance, with variables passe
 
     - hosts: servers
       roles:
-         - { role: ansible-rails_app }
+         - {role: ansible-rails_app, rails_app_name: myapp, rails_app_git_url: https://github.com/tulibraries/myapp}
 
 License
 -------
