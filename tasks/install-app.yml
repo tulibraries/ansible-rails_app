@@ -1,0 +1,73 @@
+---
+
+- name: make sure the app dir exists and is owner by app user
+  file:
+    path: "{{ rails_app_install_path }}/"
+    state: directory
+    owner: "{{ app_user }}"
+
+- name: checkout the rails app code from source control
+  git:
+    repo: "{{ rails_app_git_url}}"
+    dest: "{{ rails_app_install_path}}"
+    version: "{{ rails_app_git_branch }}"
+    recursive: yes
+    accept_hostkey: yes
+  register: git
+  become_user: "{{ app_user }}"
+  notify:
+      - restart passenger app
+      - deploy tasks
+  tags:
+    - rails_app
+
+- name: bundle install the app gems dependencies
+  bundler:
+    state: present
+    chdir: "{{ rails_app_install_path}}"
+    deployment_mode: yes
+    exclude_groups: "{{ rails_app_deployment_exclude_groups }}"
+    executable: "{{ rails_app_bundle_exe }}"
+  become_user: "{{ app_user }}"
+  #register: bundled
+  #changed_when: "'Installing' in bundled.stdout"
+  environment:
+      - RAILS_ENV: "{{ rails_app_env}}"
+  notify:
+      - restart passenger app
+      - deploy tasks
+  tags:
+    - rails_app
+
+- name: Add basic rails configuration files
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ rails_app_install_path }}/config/{{item}}"
+  with_items:
+    - secrets.yml
+  become_user: "{{ app_user }}"
+  notify:
+    - restart passenger app
+  tags:
+    - rails_app
+
+
+- name: Trigger deploy tasks if vendor/bundle does not exist
+  stat:
+   path: "{{ rails_app_install_path}}/vendor/bundle"
+  register: vendor_bundle
+  changed_when: "vendor_bundle.stat.isdir is undefined"
+  notify:
+    - deploy tasks
+  tags:
+      - rails_app
+
+- name: Trigger deploy tasks if public/assets does not exist
+  stat:
+    path: "{{ rails_app_install_path}}/public/assets"
+  register: public_assets
+  changed_when: "public_assets.stat.isdir is undefined"
+  notify:
+    - deploy tasks
+  tags:
+      - rails_app

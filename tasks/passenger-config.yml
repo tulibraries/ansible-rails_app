@@ -1,0 +1,55 @@
+---
+
+- name: template apache config for all.yml applications on port 80
+  template:
+    src: applications.conf.j2
+    dest: /etc/httpd/conf.d/applications.conf
+  become: yes
+  notify: restart apache
+  tags:
+    - rails_app
+    - passenger
+
+- include: ssl.yml
+  when: app_use_ssl
+
+- name: create applications conf directory
+  file:
+    path: /etc/httpd/conf.d/applications
+    state: directory
+  become: yes
+  tags:
+    - rails_app
+    - passenger
+
+- name: Check if the application specific config exists
+  stat:
+    path: /etc/httpd/conf.d/applications/{{ rails_app_name }}.conf-fragment
+  register: app_httpd_config
+  changed_when: app_httpd_config.stat.exists == False
+  tags:
+      - rails_app
+      - passenger
+
+- name: Put the applications specific template in place
+  template:
+    src: conf-fragment.j2
+    dest: /etc/httpd/conf.d/applications/{{ rails_app_name }}.conf-fragment
+  become: yes
+  notify: restart apache
+  tags:
+    - rails_app
+    - passenger
+
+# The order of handlers is unpredictable. Sometimes when an app config is first created
+# ansble tries to restart passenger app before apache is restarted, which then fails the playbook
+# @TODO Better solution is to move this config task to it's own play.
+- name: Force restart apache when the config added for first time
+  service:
+    name: httpd
+    state: restarted
+  when: app_httpd_config.stat.exists == False
+  become: yes
+  tags:
+    - rails_app
+    - passenger

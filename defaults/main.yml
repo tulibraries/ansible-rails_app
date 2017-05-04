@@ -1,0 +1,28 @@
+---
+
+rails_app_user: "{{ rails_app_name }}"
+rails_app_git_branch: master
+rails_app_install_path: /var/www/{{ rails_app_name }}
+rails_app_ruby_path: /home/{{ rails_app_user }}/.rbenv/versions/{{ rbenv.default_ruby}}
+rails_app_bundle_exe: "{{rails_app_ruby_path}}/bin/bundle"
+rails_app_gem_path: "{{rails_app_ruby_path}}/lib/ruby/gems"
+rails_app_url_base_path: "/"
+
+rails_app_env: production
+rails_app_deployment_exclude_groups:
+  - test
+  - development
+
+is_blacklight_app: false
+
+app_use_ssl: false
+app_certs_base_path: /etc/pki/tls
+app_ssl_cert_path: "{{ app_certs_base_path }}/certs/{{ rails_app_name }}.crt"
+app_ssl_key_path:  "{{ app_certs_base_path }}/private/{{ rails_app_name }}.key"
+app_ssl_intermediate_path: "{{ app_certs_base_path }}/certs/intermediate.crt"
+app_use_intermediate_cert: true
+
+app_set_root_redirect: false
+
+#default to no app specific dependencies to install
+app_package_dependencies: []

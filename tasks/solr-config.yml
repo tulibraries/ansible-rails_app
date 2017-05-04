@@ -1,0 +1,25 @@
+---
+
+- set_fact:
+    solr_home: /var/solr
+
+- name: delete existing solr conf
+  shell:
+    rm -rf {{ solr_home }}/data/{{ solr_core }}/conf
+
+- name: copy the blacklight solr conf into place
+  shell:
+    cp -r {{ rails_app_install_path }}/solr/conf {{ solr_home }}/data/{{ solr_core }}/conf
+  become: yes
+  notify:
+    - restart solr
+
+
+- name: make sure solr user owns the files
+  file:
+    path:  "{{ solr_home }}/data/{{ solr_core }}/conf"
+    state: directory
+    owner: solr
+    group: solr
+  become: yes
+  notify:

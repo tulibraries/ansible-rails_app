@@ -1,0 +1,24 @@
+#Disable Indexes unless globally
+Options -Indexes
+
+# Disable Trace
+TraceEnable off
+
+Header always set X-Frame-Options SAMEORIGIN
+Header always set X-Content-Type-Options nosniff
+
+<VirtualHost *:80>
+    ServerName {{ fqdn| default(ansible_fqdn) }}
+
+    # Tell Apache and Passenger where your app's 'public' directory is
+    DocumentRoot /var/www/html
+    PassengerRuby /usr/bin/ruby
+
+    {% if app_set_root_redirect %}
+    RedirectMatch ^/$ {{ app_root_redirect }}
+    {% endif %}
+
+    #include app specific configs in the applications directory
+    Include conf.d/applications/*.conf-fragment
+
+</VirtualHost>

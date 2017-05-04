@@ -1,0 +1,40 @@
+---
+
+- name: Install rails dependencies
+  yum:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - git-core
+    - zlib
+    - zlib-devel
+    - gcc-c++
+    - patch
+    - readline
+    - readline-devel
+    - libyaml-devel
+    - libffi-devel
+    - openssl-devel
+    - make
+    - bzip2
+    - autoconf
+    - automake
+    - libtool
+    - bison
+    - curl
+    - sqlite-devel
+    - epel-release
+  become: yes
+
+- name: install nodejs for asset pipeline for rails
+  yum:
+    name: nodejs
+    state: present
+  become: yes
+
+- name: Install app specifc dependencies
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ app_package_dependencies |default([]) }}"
+  become: yes
