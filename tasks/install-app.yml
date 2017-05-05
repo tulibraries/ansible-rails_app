@@ -4,7 +4,7 @@
   file:
     path: "{{ rails_app_install_path }}/"
     state: directory
-    owner: "{{ app_user }}"
+    owner: "{{ rails_app_user }}"
 
 - name: checkout the rails app code from source control
   git:
@@ -14,7 +14,7 @@
     recursive: yes
     accept_hostkey: yes
   register: git
-  become_user: "{{ app_user }}"
+  become_user: "{{ rails_app_user }}"
   notify:
       - restart passenger app
       - deploy tasks
@@ -28,7 +28,7 @@
     deployment_mode: yes
     exclude_groups: "{{ rails_app_deployment_exclude_groups }}"
     executable: "{{ rails_app_bundle_exe }}"
-  become_user: "{{ app_user }}"
+  become_user: "{{ rails_app_user }}"
   #register: bundled
   #changed_when: "'Installing' in bundled.stdout"
   environment:
@@ -45,7 +45,7 @@
     dest: "{{ rails_app_install_path }}/config/{{item}}"
   with_items:
     - secrets.yml
-  become_user: "{{ app_user }}"
+  become_user: "{{ rails_app_user }}"
   notify:
     - restart passenger app
   tags:
@@ -56,7 +56,7 @@
     src: "{{ item }}.j2"
     dest: "{{ rails_app_install_path }}/config/{{item}}"
   with_items: "{{ rails_app_additional_config }}"
-  become_user: "{{ app_user }}"
+  become_user: "{{ rails_app_user }}"
   notify:
     - restart passenger app
   tags:
