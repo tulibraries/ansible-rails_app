@@ -38,6 +38,6 @@
     name: solr
     state: restarted
   become: yes
-  when: blacklight_app
+  when: is_blacklight_app
   tags:
     - rails_app
