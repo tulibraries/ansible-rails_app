@@ -43,8 +43,7 @@
   template:
     src: "{{ item }}.j2"
     dest: "{{ rails_app_install_path }}/config/{{item}}"
-  with_items:
-    - secrets.yml
+  with_items: "{{ rails_app_default_config }}"
   become_user: "{{ rails_app_user }}"
   notify:
     - restart passenger app
