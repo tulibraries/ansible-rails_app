@@ -22,7 +22,8 @@ These must be defined in your playbook for this role to work.
 |---|---|---|
 | `rails_app_url_base_path` | "/" | The url path where the application will be served  |
 | `is_blacklight_app` | false | If this is a blacklight app, then it does some Blacklight specific things  |
-| `rails_app_use_ssl` | false   |  Set to true to create ssl virtual hosts and add certificates|
+| `rails_app_use_ssl` | false   |  Set to true to create ssl virtual hosts and add certificates |
+| `rails_app_force_ssl` | false   |  Set to true to redirect all incoming traffic to https |
 |`rails_app_user`   |  {{ rails_app_name }} |  The user that runs the app, under whose account rbenv is installed |
 | `rails_app_git_branch` | master |   |
 | `rails_app_install_path` | /var/www/{{ rails_app_name }} |   |

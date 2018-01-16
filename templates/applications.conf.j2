@@ -10,6 +10,12 @@ Header always set X-Content-Type-Options nosniff
 <VirtualHost *:80>
     ServerName {{ fqdn| default(ansible_fqdn) }}
 
+    {% if rails_app_force_ssl %}
+    RewriteEngine On
+    RewriteCond %{HTTPS} off
+    RewriteRule (.*) https://%{SERVER_NAME}/$1 [R,L]
+    {% endif %}
+
     # Tell Apache and Passenger where your app's 'public' directory is
     DocumentRoot /var/www/html
     PassengerRuby /usr/bin/ruby
