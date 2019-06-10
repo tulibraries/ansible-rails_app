@@ -22,6 +22,15 @@
   tags:
     - rails_app
 
+- name: Optionally manage bundler version if required
+  gem:
+    name: bundler
+    version: "{{ bundler_version }}"
+    state: present
+  when: bundler_version is defined
+  tags:
+    - rails_app
+
 - name: bundle install the app gems dependencies
   bundler:
     state: present
