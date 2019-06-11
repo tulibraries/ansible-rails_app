@@ -38,3 +38,5 @@ app_ssl_intermediate_path: "{{ app_certs_base_path }}/certs/intermediate.crt"
 app_use_intermediate_cert: true
 
 app_set_root_redirect: false
+
+using_postgres: false

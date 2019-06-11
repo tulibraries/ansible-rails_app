@@ -72,8 +72,6 @@
   tags:
     - rails_app
 
-
-
 - name: Trigger deploy tasks if vendor/bundle does not exist
   stat:
     path: "{{ rails_app_install_path }}/vendor/bundle"
