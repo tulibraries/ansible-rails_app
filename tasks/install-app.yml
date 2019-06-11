@@ -8,42 +8,43 @@
 
 - name: checkout the rails app code from source control
   git:
-    repo: "{{ rails_app_git_url}}"
-    dest: "{{ rails_app_install_path}}"
+    repo: "{{ rails_app_git_url }}"
+    dest: "{{ rails_app_install_path }}"
     version: "{{ rails_app_git_branch }}"
-    recursive: yes
-    accept_hostkey: yes
+    recursive: true
+    accept_hostkey: true
   register: git
+  become: true
   become_user: "{{ rails_app_user }}"
   notify:
-      - restart passenger app
-      - deploy tasks
+    - restart passenger app
+    - deploy tasks
   tags:
     - rails_app
 
 - name: bundle install the app gems dependencies
   bundler:
     state: present
-    chdir: "{{ rails_app_install_path}}"
-    deployment_mode: yes
+    chdir: "{{ rails_app_install_path }}"
+    deployment_mode: true
     exclude_groups: "{{ rails_app_deployment_exclude_groups }}"
     executable: "{{ rails_app_bundle_exe }}"
+  become: true
   become_user: "{{ rails_app_user }}"
-  #register: bundled
-  #changed_when: "'Installing' in bundled.stdout"
   environment:
-      - RAILS_ENV: "{{ rails_app_env}}"
+    - RAILS_ENV: "{{ rails_app_env }}"
   notify:
-      - restart passenger app
-      - deploy tasks
+    - restart passenger app
+    - deploy tasks
   tags:
     - rails_app
 
 - name: Add basic rails configuration files
   template:
     src: "{{ item }}.j2"
-    dest: "{{ rails_app_install_path }}/config/{{item}}"
+    dest: "{{ rails_app_install_path }}/config/{{ item }}"
   with_items: "{{ rails_app_default_config }}"
+  become: true
   become_user: "{{ rails_app_user }}"
   notify:
     - restart passenger app
@@ -53,8 +54,9 @@
 - name: Add additional rails configuration files
   template:
     src: "{{ item }}.j2"
-    dest: "{{ rails_app_install_path }}/config/{{item}}"
+    dest: "{{ rails_app_install_path }}/config/{{ item }}"
   with_items: "{{ rails_app_additional_config }}"
+  become: true
   become_user: "{{ rails_app_user }}"
   notify:
     - restart passenger app
@@ -65,20 +67,20 @@
 
 - name: Trigger deploy tasks if vendor/bundle does not exist
   stat:
-   path: "{{ rails_app_install_path}}/vendor/bundle"
+    path: "{{ rails_app_install_path }}/vendor/bundle"
   register: vendor_bundle
   changed_when: "vendor_bundle.stat.isdir is undefined"
   notify:
     - deploy tasks
   tags:
-      - rails_app
+    - rails_app
 
 - name: Trigger deploy tasks if public/assets does not exist
   stat:
-    path: "{{ rails_app_install_path}}/public/assets"
+    path: "{{ rails_app_install_path }}/public/assets"
   register: public_assets
   changed_when: "public_assets.stat.isdir is undefined"
   notify:
     - deploy tasks
   tags:
-      - rails_app
+    - rails_app

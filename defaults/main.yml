@@ -2,7 +2,7 @@
 
 
 ## dependencies.yml
-#default to no app specific dependencies to install
+# default to no app specific dependencies to install
 rails_app_additional_dependencies: []
 
 
@@ -17,7 +17,7 @@ rails_app_use_ssl: false
 rails_app_force_ssl: false
 
 
-rails_app_default_config: 
+rails_app_default_config:
   - secrets.yml
 # Override to add custom config files from templates
 rails_app_additional_config: []
@@ -33,7 +33,7 @@ is_blacklight_app: false
 app_use_ssl: false
 app_certs_base_path: /etc/pki/tls
 app_ssl_cert_path: "{{ app_certs_base_path }}/certs/{{ rails_app_name }}.crt"
-app_ssl_key_path:  "{{ app_certs_base_path }}/private/{{ rails_app_name }}.key"
+app_ssl_key_path: "{{ app_certs_base_path }}/private/{{ rails_app_name }}.key"
 app_ssl_intermediate_path: "{{ app_certs_base_path }}/certs/intermediate.crt"
 app_use_intermediate_cert: true
 

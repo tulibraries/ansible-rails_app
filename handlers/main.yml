@@ -1,7 +1,7 @@
 ---
 
 - name: deploy tasks
-  shell: >
+  command: >
     bash -lc 'RAILS_ENV={{ rails_app_env }} bundle exec rake {{ item }}'
   args:
     chdir: "{{ rails_app_install_path }}"
@@ -9,19 +9,20 @@
     - assets:clobber
     - assets:precompile
     - db:migrate
-    - db:seed
+  become: true
   become_user: "{{ rails_app_user }}"
   notify: restart passenger app
   tags:
-      - rails_app
+    - rails_app
 
 - name: restart passenger app
-  shell: >
+  command: >
     bash -lc 'passenger-config restart-app `pwd`'
   args:
     chdir: "{{ rails_app_install_path }}"
+  become: true
   become_user: "{{ rails_app_user }}"
-  failed_when: False
+  failed_when: false
   tags:
     - rails-app
 
@@ -29,7 +30,7 @@
   service:
     name: httpd
     state: restarted
-  become: yes
+  become: true
   tags:
     - rails_app
 
@@ -37,7 +38,7 @@
   service:
     name: solr
     state: restarted
-  become: yes
+  become: true
   when: is_blacklight_app
   tags:
     - rails_app
