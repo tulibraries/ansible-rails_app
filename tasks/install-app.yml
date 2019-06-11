@@ -28,6 +28,8 @@
     version: "{{ bundler_version }}"
     state: present
   when: bundler_version is defined
+  become: true
+  become_user: "{{ rails_app_user }}"
   tags:
     - rails_app
 
@@ -71,6 +73,9 @@
     - restart passenger app
   tags:
     - rails_app
+
+- include: db.yml
+  when: using_postgres
 
 - name: Trigger deploy tasks if vendor/bundle does not exist
   stat:
