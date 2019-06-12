@@ -10,7 +10,7 @@ codecov = "*"
 
 [packages]
 ansible = ">= 2.8.0"
-molecule = "*"
+molecule = "== 2.22rc1"
 
 [requires]
 python_version = "3.7"
