@@ -1,0 +1,18 @@
+---
+
+- name: Converge
+  hosts: all
+  become: true
+  roles:
+    - role: ansible-rails_app
+      rails_app_name: nothing
+      rails_app_git_url: https://github.com/bibliotechy/rails-nihilist
+      rails_app_prod_secret: EXTREMELY_LONG_SECRET_VALUE
+      bundler_version: 1.15.4
+  vars:
+    rbenv:
+      env: user
+      version: v1.0.0
+      default_ruby: 2.5.1
+      rubies:
+        - version: 2.5.1

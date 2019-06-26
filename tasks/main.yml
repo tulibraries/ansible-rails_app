@@ -5,5 +5,3 @@
 - include: dependencies.yml
 - include: passenger-config.yml
 - include: install-app.yml
-- include: solr-config.yml
-  when: is_blacklight_app

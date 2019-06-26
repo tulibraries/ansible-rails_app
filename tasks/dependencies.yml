@@ -2,7 +2,7 @@
 
 - name: Install rails dependencies
   yum:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: present
   with_items:
     - git-core
@@ -24,17 +24,17 @@
     - curl
     - sqlite-devel
     - epel-release
-  become: yes
+  become: true
 
 - name: install nodejs for asset pipeline for rails
   yum:
     name: nodejs
     state: present
-  become: yes
+  become: true
 
 - name: Install app specifc dependencies
   yum:
     name: "{{ item }}"
     state: present
   with_items: "{{ rails_app_additional_dependencies }}"
-  become: yes
+  become: true

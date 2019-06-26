@@ -4,20 +4,17 @@
   template:
     src: applications.conf.j2
     dest: /etc/httpd/conf.d/applications.conf
-  become: yes
+  become: true
   notify: restart apache
   tags:
     - rails_app
     - passenger
 
-- include: ssl.yml
-  when: app_use_ssl
-
 - name: create applications conf directory
   file:
     path: /etc/httpd/conf.d/applications
     state: directory
-  become: yes
+  become: true
   tags:
     - rails_app
     - passenger
@@ -26,16 +23,16 @@
   stat:
     path: /etc/httpd/conf.d/applications/{{ rails_app_name }}.conf-fragment
   register: app_httpd_config
-  changed_when: app_httpd_config.stat.exists == False
+  changed_when: not app_httpd_config.stat.exists
   tags:
-      - rails_app
-      - passenger
+    - rails_app
+    - passenger
 
 - name: Put the applications specific template in place
   template:
     src: conf-fragment.j2
     dest: /etc/httpd/conf.d/applications/{{ rails_app_name }}.conf-fragment
-  become: yes
+  become: true
   notify: restart apache
   tags:
     - rails_app
@@ -48,8 +45,8 @@
   service:
     name: httpd
     state: restarted
-  when: app_httpd_config.stat.exists == False
-  become: yes
+  when: not app_httpd_config.stat.exists
+  become: true
   tags:
     - rails_app
     - passenger

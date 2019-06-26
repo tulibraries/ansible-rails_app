@@ -1,0 +1,50 @@
+---
+
+- name: Prepare
+  hosts: all
+  vars:
+    rails_app_user: nothing
+  pre_tasks:
+    - name: install library dependencies
+      package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - git-core
+        - zlib
+        - zlib-devel
+        - gcc-c++
+        - patch
+        - readline
+        - readline-devel
+        - libyaml-devel
+        - libffi-devel
+        - openssl-devel
+        - make
+        - bzip2
+        - autoconf
+        - automake
+        - libtool
+        - bison
+        - curl
+        - sqlite-devel
+        - httpd
+    - name: Ensure rails app user is present.
+      user:
+        name: "{{ rails_app_user }}"
+        state: present
+
+  roles:
+    - role: zzet.rbenv
+      vars:
+        rbenv_users: "{{ rails_app_user }}"
+        rbenv_owner: "{{ rails_app_user }}"
+        rbenv_group: "{{ rails_app_user }}"
+        rbenv:
+          env: user
+          version: v1.1.1
+          default_ruby: 2.5.1
+          rubies:
+            - version: 2.5.1
+
+    - role: tulibraries.ansible_role_passenger_apache
