@@ -1,0 +1,26 @@
+---
+
+- name: Check if the schema_migrations table exists
+  postgresql_query:
+    db: manifold
+    query: "SELECT to_regclass('public.schema_migrations');"
+  register: pgq
+  become: true
+  become_user: postgres
+  delegate_to: "{{ rails_app_db_machine }}"
+  changed_when: pgq.query_result[0]['to_regclass'] is none
+  tags:
+    - rails_app
+    - db
+
+- name: Setup the postgres DB the first time this runs
+  command: >
+    bash -lc 'RAILS_ENV={{ rails_app_env }}  bundle exec rails db:schema:load'
+  args:
+    chdir: "{{ rails_app_install_path }}"
+  when: pgq.query_result[0]['to_regclass'] is none
+  become: true
+  become_user: "{{ rails_app_user }}"
+  tags:
+    - rails_app
+    - db

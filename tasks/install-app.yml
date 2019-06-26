@@ -22,12 +22,24 @@
   tags:
     - rails_app
 
-- name: Optionally manage bundler version if required
-  gem:
-    name: bundler
-    version: "{{ bundler_version }}"
-    state: present
+- name: check if bundler is already installed
+  command: bash -lc 'RAILS_ENV={{ rails_app_env }} bundle --help'
+  args:
+    chdir: "{{ rails_app_install_path }}"
+  register: bundler_present
+  become: true
+  become_user: "{{ rails_app_user }}"
   when: bundler_version is defined
+  failed_when: false
+  changed_when: bundler_present.rc != 0
+  tags:
+    - rails_app
+
+- name: Optionally manage bundler version if required
+  command: bash -lc 'gem install bundler -v {{ bundler_version }}'
+  when: bundler_version is defined and bundler_present.rc != 0
+  become: true
+  become_user: "{{ rails_app_user }}"
   tags:
     - rails_app
 
@@ -71,6 +83,9 @@
     - restart passenger app
   tags:
     - rails_app
+
+- include: db.yml
+  when: using_postgres
 
 - name: Trigger deploy tasks if vendor/bundle does not exist
   stat:

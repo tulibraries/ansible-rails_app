@@ -9,7 +9,9 @@ docker = "*"
 codecov = "*"
 
 [packages]
-molecule = "*"
+ansible = ">= 2.8.0"
+molecule = "== 2.22rc1"
+flake8 =  ">= 3.6.0"
 
 [requires]
 python_version = "3.7"
