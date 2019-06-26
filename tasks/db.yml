@@ -15,7 +15,7 @@
 
 - name: Setup the postgres DB the first time this runs
   command: >
-    bash -lc 'RAILS_ENV={{ rails_app_env }}  bundle exec rails db:schema:load'
+    bash -lc 'RAILS_ENV={{ rails_app_env }}  {{rails_app_bundle_exe}} exec rails db:schema:load'
   args:
     chdir: "{{ rails_app_install_path }}"
   when: pgq.query_result[0]['to_regclass'] is none
