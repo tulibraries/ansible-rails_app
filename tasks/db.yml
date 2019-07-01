@@ -13,9 +13,9 @@
     - rails_app
     - db
 
-- name: Setup the postgres DB the first time this runs
+- name: Setup the postgres DB the first time this runs (please)
   command: >
-    bash -lc 'RAILS_ENV={{ rails_app_env }}  bundle exec rails db:schema:load'
+    bash -lc 'RAILS_ENV={{ rails_app_env }} DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rails db:schema:load'
   args:
     chdir: "{{ rails_app_install_path }}"
   when: pgq.query_result[0]['to_regclass'] is none
