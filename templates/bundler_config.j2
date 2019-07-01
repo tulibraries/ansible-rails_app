@@ -1,0 +1,6 @@
+---
+
+{% for config in rails_app_bundler_configs %}
+{{ config.key }}: "{{ config.value }}"
+
+{% endfor %}

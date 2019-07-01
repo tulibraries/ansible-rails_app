@@ -43,6 +43,28 @@
   tags:
     - rails_app
 
+- name: Ensure the .bundle directory exists
+  file:
+    state: directory
+    dest: "/home/{{ rails_app_user }}/.bundle"
+    owner: "{{ rails_app_user }}"
+    group: "{{ rails_app_user }}"
+  become: true
+  become_user: "{{ rails_app_user }}"
+  tags:
+    - rails_app
+
+- name: Set Bundler config options in ~/.bundle/config
+  template:
+    src: bundler_config.j2
+    dest: "/home/{{ rails_app_user }}/.bundle/config"
+    owner: "{{ rails_app_user }}"
+    group: "{{ rails_app_user }}"
+  become: true
+  become_user: "{{ rails_app_user }}"
+  tags:
+    - rails_app
+
 - name: bundle install the app gems dependencies
   bundler:
     state: present
