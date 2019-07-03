@@ -19,3 +19,9 @@ def test_httpd_application_conf_created(host):
 def test_rails_app_in_place(host):
     app_dir = host.file("/var/www/nothing")
     assert app_dir.is_directory
+
+
+def test_bundle_config_in_place(host):
+    f = host.file("/home/nothing/.bundle/config")
+    assert f.exists
+    assert f.contains("NEEDS_FLAGS: \"--with-flags\"")
