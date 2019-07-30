@@ -41,7 +41,7 @@
 
 - name: Create systemd definition for awslogs
   template:
-    src: awslogs.service
+    src: awslogs.service.j2
     dest: /lib/systemd/system/awslogs.service
     owner: root
     group: root
