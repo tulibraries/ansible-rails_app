@@ -1,0 +1,84 @@
+---
+
+- name: Create awslogs directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - /var/awslogs/state
+    - /var/awslogs/etc
+
+- name: Configure awslogs agent
+  template:
+    src: awslogs.conf.j2
+    dest: /var/awslogs/etc/awslogs.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart awslogs
+
+- name: Configure awslogs credentials
+  template:
+    src: aws.conf.j2
+    dest: /var/awslogs/etc/aws.conf
+  when: awslogs_secret_access_key is defined
+  notify: restart awslogs
+
+- name: Check if awslogs service exists
+  stat:
+    path: /etc/init.d/awslogs
+  register: service_status
+
+- name: Download awslogs python script
+  get_url:
+    dest: /tmp/awslogs-agent-setup.py
+    group: root
+    owner: root
+    mode: 0600
+    url: https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py
+  when: service_status.stat.exists == false
+
+- name: Create systemd definition for awslogs
+  template:
+    src: awslogs.service
+    dest: /lib/systemd/system/awslogs.service
+    owner: root
+    group: root
+    mode: 0644
+    backup: true
+  when: service_status.stat.exists == false
+
+- name: Enable awslogs service
+  systemd:
+    enabled: true
+    name: awslogs.service
+  when: service_status.stat.exists == false
+
+- name: Upload temporary awslogs.conf for new setup
+  template:
+    src: awslogs.conf.j2
+    dest: /tmp/awslogs.conf
+    owner: root
+    group: root
+    mode: 0644
+  when: service_status.stat.exists == false
+
+- name: Install awslogs daemon
+  shell: "python /tmp/awslogs-agent-setup.py -n -r {{ awslogs_region }} -c /tmp/awslogs.conf"
+  args:
+    creates: "/etc/init.d/awslogs"
+
+- name: Start awslogs service
+  service:
+    enabled: true
+    name: awslogs
+    state: started
+
+- name: Cleanup awslogs files
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - /tmp/awslogs.conf
+    - /tmp/awslogs-agent-setup.py

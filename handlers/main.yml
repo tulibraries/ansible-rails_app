@@ -1,5 +1,19 @@
 ---
 
+- name: deploy yarn
+  shell: >
+    bash -lc 'RAILS_ENV={{ rails_app_env }} NODE_ENV=production {{ item }}'
+  args:
+    chdir: "{{ rails_app_install_path }}"  # noqa 305
+  with_items:
+    - yarn
+  become: true
+  become_user: "{{ rails_app_user }}"
+  when: rails_app_use_webpack is defined and rails_app_use_webpack
+  notify: deploy tasks
+  tags:
+    - app
+
 - name: deploy tasks
   command: >
     bash -lc 'RAILS_ENV={{ rails_app_env }} bundle exec rake {{ item }}'
@@ -9,6 +23,7 @@
     - assets:clobber
     - assets:precompile
     - db:migrate
+    - db:seed
   become: true
   become_user: "{{ rails_app_user }}"
   notify: restart passenger app
@@ -42,3 +57,10 @@
   when: is_blacklight_app
   tags:
     - rails_app
+
+- name: restart awslogs
+  service:
+    name: awslogs
+    state: restarted
+    enabled: true
+  ignore_errors: true
