@@ -37,7 +37,7 @@
     owner: root
     mode: 0600
     url: https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py
-  when: service_status.stat.exists == false
+  when: not service_status.stat.exists
 
 - name: Create systemd definition for awslogs
   template:
@@ -47,13 +47,13 @@
     group: root
     mode: 0644
     backup: true
-  when: service_status.stat.exists == false
+  when: not service_status.stat.exists
 
 - name: Enable awslogs service
   systemd:
     enabled: true
     name: awslogs.service
-  when: service_status.stat.exists == false
+  when: not service_status.stat.exists
 
 - name: Upload temporary awslogs.conf for new setup
   template:
@@ -62,7 +62,7 @@
     owner: root
     group: root
     mode: 0644
-  when: service_status.stat.exists == false
+  when: not service_status.stat.exists
 
 - name: Install awslogs daemon
   shell: "python /tmp/awslogs-agent-setup.py -n -r {{ awslogs_region }} -c /tmp/awslogs.conf"
