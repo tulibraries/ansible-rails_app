@@ -23,7 +23,6 @@
     - assets:clobber
     - assets:precompile
     - db:migrate
-    - db:seed
   become: true
   become_user: "{{ rails_app_user }}"
   notify: restart passenger app
