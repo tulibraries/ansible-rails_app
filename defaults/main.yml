@@ -24,8 +24,11 @@ rails_app_env: production
 rails_app_deployment_exclude_groups:
   - test
   - development
+rails_app_dev_secret: DUMMYVALUE
+rails_app_test_secret: DUMMYVALUE
 
 is_blacklight_app: false
+
 app_use_ssl: false
 app_certs_base_path: /etc/pki/tls
 app_ssl_cert_path: "{{ app_certs_base_path }}/certs/{{ rails_app_name }}.crt"
