@@ -57,10 +57,3 @@
   when: is_blacklight_app
   tags:
     - rails_app
-
-- name: restart awslogs
-  service:
-    name: awslogs
-    state: restarted
-    enabled: true
-  ignore_errors: true

@@ -21,7 +21,7 @@ Header always set X-Content-Type-Options nosniff
     {% endif %}
 
 #  Copied over from cob role, in case needed instead of above
-#    {% if app_force_ssl %}
+#    {% if rails_app_force_ssl %}
 #      RedirectMatch permanent (.*) https://{{ fqdn | default(ansible_fqdn) }}/$1
 #    {% endif %}
 
