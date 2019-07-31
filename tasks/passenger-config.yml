@@ -10,6 +10,11 @@
     - rails_app
     - passenger
 
+- include: ssl.yml
+  when: app_use_ssl
+  tags:
+    - ssl
+
 - name: create applications conf directory
   file:
     path: /etc/httpd/conf.d/applications

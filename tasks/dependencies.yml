@@ -28,13 +28,21 @@
 
 - name: install nodejs for asset pipeline for rails
   yum:
-    name: nodejs
+    name: nodejs-{{ nodejs_version }}
     state: present
   become: true
+
+- name: Install yarn node package if this project needs it
+  npm:
+    name: yarn
+    global: true
+    state: present
+    version: "{{ yarn_version }}"
+  when: rails_app_use_webpack is defined and rails_app_use_webpack
 
 - name: Install app specifc dependencies
   yum:
     name: "{{ item }}"
     state: present
-  with_items: "{{ rails_app_additional_dependencies }}"
+  with_items: "{{ rails_app_additional_dependencies | default([]) }}"
   become: true
