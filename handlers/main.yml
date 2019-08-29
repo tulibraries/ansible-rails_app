@@ -20,7 +20,7 @@
   args:
     chdir: "{{ rails_app_install_path }}"
   with_items:
-    - assets:clobber
+    - assets:clean
     - assets:precompile
     - db:migrate
   become: true
