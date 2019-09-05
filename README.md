@@ -31,6 +31,7 @@ These must be defined in your playbook for this role to work.
 | `rails_app_bundle_exe` | "{{rails_app_ruby_path}}/bin/bundle" |   |
 | `rails_app_gem_path` | "{{rails_app_ruby_path}}/lib/ruby/gems" |   |
 | `rails_app_env` | production |   |
+| `rails_app_user_envvars`| [] | Array of dictionaries of evvars to be set. `{envvar: "COW", value: "moo"}`. Can also take an `when` for conditional envvar setting |
 | `rails_app_deployment_exclude_groups`: [test, development] | |
 
 

@@ -109,6 +109,15 @@
   tags:
     - rails_app
 
+- name: Create a .env file in the root of the app
+  template:
+    dest: "{{ rails_app_install_path }}/.env.local"
+    src: .env.local.j2
+  notify:
+    - restart passenger app
+  tags:
+    - rails_app
+
 - include: db.yml
   when: using_postgres
 
