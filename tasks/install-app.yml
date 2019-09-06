@@ -120,6 +120,26 @@
   tags:
     - rails_app
 
+- name: Check if an inventory env file exists in the app
+  stat:
+    path: "{{ rails_app_install_path }}/.env.{{ inventory_shortname }}"
+  register: inventory_env
+  changed_when: false
+  tags:
+    - rails_app
+
+- name: create symlink to inventory env file if it exists
+  file:
+    state: link
+    src: "{{ rails_app_install_path }}/.env.{{ inventory_shortname }}"
+    dest: "{{ rails_app_install_path }}/.env"
+  when: inventory_env.stat.exists
+  become: true
+  notify:
+    - restart passenger app
+  tags:
+    - rails_app
+
 - include: db.yml
   when: using_postgres
 
