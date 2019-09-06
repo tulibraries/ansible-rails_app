@@ -135,6 +135,7 @@
     dest: "{{ rails_app_install_path }}/.env"
   when: inventory_env.stat.exists
   become: true
+  become_user: "{{ rails_app_user }}"
   notify:
     - restart passenger app
   tags:
