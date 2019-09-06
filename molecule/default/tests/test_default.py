@@ -25,3 +25,11 @@ def test_bundle_config_in_place(host):
     f = host.file("/home/nothing/.bundle/config")
     assert f.exists
     assert f.contains("NEEDS_FLAGS: \"--with-flags\"")
+
+
+def test_rails_app_user_envvars(host):
+    env = host.file("/var/www/nothing/.env.local")
+    assert env.exists
+    assert env.contains("MOO='cow'")
+    assert env.contains("PIG='oink'")
+    assert env.contains("COW='moo'") is False

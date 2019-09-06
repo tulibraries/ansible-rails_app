@@ -12,6 +12,12 @@
       rails_app_bundler_configs:
         - key: "NEEDS_FLAGS"
           value: "--with-flags"
+      set_pig: true
+      rails_app_user_envvars:
+        - {envvar: "MOO", value: "cow"}
+        - {envvar: "COW", value: "moo", when: "{{ set_cow is defined and set_cow }}"}
+        - {envvar: "PIG", value: "oink", when: "{{ set_pig is defined and set_pig }}"}
+
   vars:
     rbenv:
       env: user
