@@ -3,6 +3,7 @@
 ## dependencies.yml
 # default to no app specific dependencies to install
 rails_app_additional_dependencies: []
+
 nodejs_version: 6.17.1
 rails_app_use_webpack: true
 yarn_version: v1.13.0
@@ -50,3 +51,4 @@ app_use_intermediate_cert: true
 app_set_root_redirect: false
 
 using_postgres: false
+inventory_shortname: "{{ inventory_dir.split('/')[-1] }}"
