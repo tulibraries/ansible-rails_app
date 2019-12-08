@@ -26,11 +26,34 @@
     - epel-release
   become: true
 
-- name: install nodejs for asset pipeline for rails
+
+- name: Check current node version
+  shell: node --version 2>&1
+  register: installed_node_version
+  failed_when: false  # noqa 301
+  changed_when: false
+
+- name: remove old versions of node
   yum:
-    name: nodejs-{{ nodejs_version }}
+    name: nodejs
+    state: absent
+  when: installed_node_version.stdout is not regex("v{{ nodejs_major_version }}.*")  # noqa 102
+
+- name: Import Nodesource RPM key
+  rpm_key:
+    key: https://rpm.nodesource.com/pub/el/NODESOURCE-GPG-SIGNING-KEY-EL
     state: present
-  become: true
+
+- name: Add Nodesource repositories for Node.js
+  yum:
+    name: "https://rpm.nodesource.com/pub_{{ nodejs_major_version }}.x/el/{{ ansible_distribution_major_version }}/{{ ansible_architecture }}/nodesource-release-el{{ ansible_distribution_major_version }}-1.noarch.rpm"  # noqa 204
+    state: present
+
+- name: Ensure Node.js and npm are installed.
+  yum:
+    name: "nodejs-{{ nodejs_version }}"
+    state: present
+    enablerepo: "nodesource"
 
 - name: Install yarn node package if this project needs it
   npm:

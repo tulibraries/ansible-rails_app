@@ -43,8 +43,8 @@
         rbenv:
           env: user
           version: v1.1.1
-          default_ruby: 2.5.1
+          default_ruby: 2.6.5
           rubies:
-            - version: 2.5.1
+            - version: 2.6.5
 
     - role: tulibraries.ansible_role_passenger_apache
