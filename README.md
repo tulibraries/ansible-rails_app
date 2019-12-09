@@ -12,9 +12,11 @@ These must be defined in your playbook for this role to work.
 
 `rails_app_name: myapp` # Name of your app which will define the install directory, app user, and more
 
-`rails_app_git_url` # URL to the public github repo where you app can be found
+`rails_app_git_url`: # URL to the public github repo where you app can be found
 
-`rails_app_prod_secret: EXTREMELY_LONG_SECRET_VALUE` # This should be vaulted.
+`rails_app_git_branch`: the branch or tag to use 
+
+`rails_app_prod_secret`: EXTREMELY_LONG_SECRET_VALUE` # This should be vaulted.
 
 ### Optional Variables
 
@@ -25,7 +27,6 @@ These must be defined in your playbook for this role to work.
 | `rails_app_use_ssl` | false   |  Set to true to create ssl virtual hosts and add certificates |
 | `rails_app_force_ssl` | false   |  Set to true to redirect all incoming traffic to https |
 |`rails_app_user`   |  {{ rails_app_name }} |  The user that runs the app, under whose account rbenv is installed |
-| `rails_app_git_branch` | master |   |
 | `rails_app_install_path` | /var/www/{{ rails_app_name }} |   |
 | `rails_app_ruby_path` | /home/{{ rails_app_user }}/.rbenv/versions/{{ rbenv.default_ruby}} |   |
 | `rails_app_bundle_exe` | "{{rails_app_ruby_path}}/bin/bundle" |   |

@@ -23,7 +23,6 @@ rails_app_user_envvars: []
 
 
 rails_app_user: "{{ rails_app_name }}"
-rails_app_git_branch: master
 rails_app_install_path: /var/www/{{ rails_app_name }}
 rails_app_ruby_path: /home/{{ rails_app_user }}/.rbenv/versions/{{ rbenv.default_ruby}}
 rails_app_bundle_exe: "{{rails_app_ruby_path}}/bin/bundle"
