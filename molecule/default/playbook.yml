@@ -22,6 +22,6 @@
     rbenv:
       env: user
       version: v1.0.0
-      default_ruby: 2.5.1
+      default_ruby: 2.6.5
       rubies:
-        - version: 2.5.1
+        - version: 2.6.5

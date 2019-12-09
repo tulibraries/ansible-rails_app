@@ -4,7 +4,9 @@
 # default to no app specific dependencies to install
 rails_app_additional_dependencies: []
 
-nodejs_version: 6.17.1
+
+nodejs_major_version: 8
+nodejs_version: 8.16.2
 rails_app_use_webpack: true
 yarn_version: v1.13.0
 
