@@ -33,3 +33,9 @@ def test_rails_app_user_envvars(host):
     assert env.contains("MOO='cow'")
     assert env.contains("PIG='oink'")
     assert env.contains("COW='moo'") is False
+
+
+def test_node_version(host):
+    cmd = host.run("node --version")
+    assert cmd.rc == 0
+    assert cmd.stdout("v8.16.2")
