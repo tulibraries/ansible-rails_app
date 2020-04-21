@@ -5,8 +5,8 @@
 rails_app_additional_dependencies: []
 
 
-nodejs_major_version: 8
-nodejs_version: 8.16.2
+nodejs_major_version: 12
+nodejs_version: 12.16.2
 rails_app_use_webpack: true
 yarn_version: v1.13.0
 
