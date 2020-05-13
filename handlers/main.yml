@@ -6,7 +6,7 @@
   args:
     chdir: "{{ rails_app_install_path }}"  # noqa 305
   with_items:
-    - yarn
+    - "yarn install --frozen-lockfile --prod"
   become: true
   become_user: "{{ rails_app_user }}"
   when: rails_app_use_webpack is defined and rails_app_use_webpack
