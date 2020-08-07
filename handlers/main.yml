@@ -22,9 +22,24 @@
   with_items:
     - assets:clean
     - assets:precompile
+  become: true
+  become_user: "{{ rails_app_user }}"
+  notify:
+    - restart passenger app
+    - migrate db
+  tags:
+    - rails_app
+
+- name: migrate db
+  command: >
+    bash -lc 'RAILS_ENV={{ rails_app_env }} bundle exec rake {{ item }}'
+  args:
+    chdir: "{{ rails_app_install_path }}"
+  with_items:
     - db:migrate
   become: true
   become_user: "{{ rails_app_user }}"
+  run_once: true
   notify: restart passenger app
   tags:
     - rails_app
