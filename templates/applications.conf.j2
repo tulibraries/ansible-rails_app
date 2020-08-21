@@ -1,5 +1,6 @@
 #Disable Indexes unless globally
 Options -Indexes
+ExtendedStatus On
 
 # Disable Trace
 TraceEnable off
@@ -35,6 +36,17 @@ Header always set X-Content-Type-Options nosniff
 
     #include app specific configs in the applications directory
     Include conf.d/applications/*.conf-fragment
+
+    {% if httpd_status_enable %}
+      <IfModule mod_status.c>
+        <Location /server-status>
+          SetHandler server-status
+          Order deny,allow
+          Deny from all
+          Allow from localhost
+        </Location>
+      </IfModule>
+    {% endif %}
 
 </VirtualHost>
 
