@@ -54,4 +54,4 @@ app_set_root_redirect: false
 using_postgres: false
 inventory_shortname: "{{ inventory_dir.split('/')[-1] }}"
 httpd_status_enable: false
-mpm_event_module: false
+mpm_module: event
