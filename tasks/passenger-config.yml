@@ -37,6 +37,7 @@
   template:
     src: mpm_module.conf.j2
     dest: /etc/httpd/conf.modules.d/00-mpm.conf
+  when: mpm_event_module
   become: true
   notify: restart apache
   tags:
