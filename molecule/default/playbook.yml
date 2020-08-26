@@ -19,6 +19,7 @@
         - {envvar: "COW", value: "moo", when: "{{ set_cow is defined and set_cow }}"}
         - {envvar: "PIG", value: "oink", when: "{{ set_pig is defined and set_pig }}"}
       httpd_status_enable: true
+      mpm_module: event
   vars:
     rbenv:
       env: user

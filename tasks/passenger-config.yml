@@ -33,6 +33,16 @@
     - rails_app
     - passenger
 
+- name: Write MPM module to use event
+  template:
+    src: mpm_module.conf.j2
+    dest: /etc/httpd/conf.modules.d/00-mpm.conf
+  become: true
+  notify: restart apache
+  tags:
+    - rails_app
+    - passenger
+
 - name: Put the applications specific template in place
   template:
     src: conf-fragment.j2
