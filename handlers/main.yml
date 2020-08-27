@@ -16,7 +16,7 @@
 
 - name: deploy tasks
   command: >
-    bash -lc 'RAILS_ENV={{ rails_app_env }} bundle exec rake {{ item }}'
+    bash -lc 'RAILS_ENV={{ rails_app_env }} bundle exec rails {{ item }}'
   args:
     chdir: "{{ rails_app_install_path }}"
   with_items:
@@ -32,7 +32,7 @@
 
 - name: migrate db
   command: >
-    bash -lc 'RAILS_ENV={{ rails_app_env }} bundle exec rake {{ item }}'
+    bash -lc 'RAILS_ENV={{ rails_app_env }} bundle exec rails {{ item }}'
   args:
     chdir: "{{ rails_app_install_path }}"
   with_items:
