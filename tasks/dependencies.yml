@@ -2,30 +2,27 @@
 
 - name: Install rails dependencies
   yum:
-    name: "{{ item }}"
+    name: ["git-core",
+           "zlib",
+           "zlib-devel",
+           "gcc-c++",
+           "patch",
+           "readline",
+           "readline-devel",
+           "libyaml-devel",
+           "libffi-devel",
+           "openssl-devel",
+           "make",
+           "bzip2",
+           "autoconf",
+           "automake",
+           "libtool",
+           "bison",
+           "curl",
+           "sqlite-devel",
+           "epel-release"]
     state: present
-  with_items:
-    - git-core
-    - zlib
-    - zlib-devel
-    - gcc-c++
-    - patch
-    - readline
-    - readline-devel
-    - libyaml-devel
-    - libffi-devel
-    - openssl-devel
-    - make
-    - bzip2
-    - autoconf
-    - automake
-    - libtool
-    - bison
-    - curl
-    - sqlite-devel
-    - epel-release
   become: true
-
 
 - name: Check current node version
   shell: node --version 2>&1
@@ -88,7 +85,6 @@
 
 - name: Install app specifc dependencies
   yum:
-    name: "{{ item }}"
+    name: "{{ rails_app_additional_dependencies | default([]) }}"
     state: present
-  with_items: "{{ rails_app_additional_dependencies | default([]) }}"
   become: true
