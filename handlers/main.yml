@@ -24,6 +24,7 @@
     - assets:precompile
   become: true
   become_user: "{{ rails_app_user }}"
+  when: is_webserver
   notify:
     - restart passenger app
     - migrate db
@@ -40,6 +41,7 @@
   become: true
   become_user: "{{ rails_app_user }}"
   run_once: true
+  when: is_webserver
   notify: restart passenger app
   tags:
     - rails_app
@@ -51,6 +53,7 @@
     chdir: "{{ rails_app_install_path }}"
   become: true
   become_user: "{{ rails_app_user }}"
+  when: is_webserver
   failed_when: false
   tags:
     - rails-app
@@ -60,6 +63,7 @@
     name: httpd
     state: restarted
   become: true
+  when: is_webserver
   tags:
     - rails_app
 
