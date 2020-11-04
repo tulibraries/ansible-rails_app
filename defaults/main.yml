@@ -9,6 +9,7 @@ nodejs_major_version: 12
 nodejs_version: 12.16.2
 rails_app_use_webpack: true
 yarn_version: v1.13.0
+redis_version: 4.0.0
 
 # Define env vars that will be available to the app via a .env file
 # list items should be an array with two required and one possible value
