@@ -5,7 +5,6 @@
     path: "{{ rails_app_install_path }}/"
     state: directory
     owner: "{{ rails_app_user }}"
-    mode: 0664
 
 - name: checkout the rails app code from source control
   git:
@@ -50,7 +49,6 @@
     dest: "/home/{{ rails_app_user }}/.bundle"
     owner: "{{ rails_app_user }}"
     group: "{{ rails_app_user }}"
-    mode: 0644
   become: true
   become_user: "{{ rails_app_user }}"
   tags:
@@ -91,7 +89,6 @@
   template:
     src: "{{ item }}.j2"
     dest: "{{ rails_app_install_path }}/config/{{ item }}"
-    mode: 0664
   with_items: "{{ rails_app_default_config }}"
   become: true
   become_user: "{{ rails_app_user }}"
@@ -104,7 +101,6 @@
   template:
     src: "{{ item }}.j2"
     dest: "{{ rails_app_install_path }}/config/{{ item }}"
-    mode: 0664
   with_items: "{{ rails_app_additional_config }}"
   become: true
   become_user: "{{ rails_app_user }}"
@@ -117,7 +113,6 @@
   template:
     dest: "{{ rails_app_install_path }}/.env.local"
     src: .env.local.j2
-    mode: 0664
   become: true
   become_user: "{{ rails_app_user }}"
   notify:
