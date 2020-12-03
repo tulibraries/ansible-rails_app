@@ -62,7 +62,6 @@
     dest: "/home/{{ rails_app_user }}/.bundle/config"
     owner: "{{ rails_app_user }}"
     group: "{{ rails_app_user }}"
-    mode: 0664
   become: true
   become_user: "{{ rails_app_user }}"
   tags:
