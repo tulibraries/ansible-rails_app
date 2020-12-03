@@ -5,7 +5,7 @@
     path: "{{ rails_app_install_path }}/"
     state: directory
     owner: "{{ rails_app_user }}"
-    mode: 0644
+    mode: 0775
 
 - name: checkout the rails app code from source control
   git:
