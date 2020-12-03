@@ -4,6 +4,7 @@
   template:
     src: applications.conf.j2
     dest: /etc/httpd/conf.d/applications.conf
+    mode: 0644
   become: true
   notify: restart apache
   tags:
@@ -19,6 +20,7 @@
   file:
     path: /etc/httpd/conf.d/applications
     state: directory
+    mode: 0644
   become: true
   tags:
     - rails_app
@@ -37,6 +39,7 @@
   template:
     src: mpm_module.conf.j2
     dest: /etc/httpd/conf.modules.d/00-mpm.conf
+    mode: 0644
   become: true
   notify: restart apache
   tags:
@@ -47,6 +50,7 @@
   template:
     src: conf-fragment.j2
     dest: /etc/httpd/conf.d/applications/{{ rails_app_name }}.conf-fragment
+    mode: 0644
   become: true
   notify: restart apache
   tags:
