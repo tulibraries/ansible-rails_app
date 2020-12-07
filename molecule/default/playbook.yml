@@ -6,7 +6,7 @@
   roles:
     - role: ansible-rails_app
       rails_app_name: nothing
-      rails_app_git_url: https://github.com/bibliotechy/rails-nihilist
+      rails_app_git_url: https://github.com/tulibraries/rails-nihilist
       rails_app_git_branch: main
       rails_app_prod_secret: EXTREMELY_LONG_SECRET_VALUE
       bundler_version: 2.0.1
@@ -24,6 +24,6 @@
     rbenv:
       env: user
       version: v1.0.0
-      default_ruby: 2.6.5
+      default_ruby: 2.7.2
       rubies:
-        - version: 2.6.5
+        - version: 2.7.2
