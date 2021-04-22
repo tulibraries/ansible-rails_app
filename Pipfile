@@ -9,7 +9,8 @@ docker = "*"
 codecov = "*"
 
 [packages]
-ansible = ">= 2.8.0"
+ansible = "==2.9.20"
+cryptography = "==3.3.2"
 molecule = "== 2.22rc1"
 flake8 =  ">= 3.6.0"
 
