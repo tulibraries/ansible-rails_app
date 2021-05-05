@@ -1,3 +1,9 @@
+---
+
+ignore: |
+  .venv/
+  .cache/
+
 extends: default
 
 rules:
