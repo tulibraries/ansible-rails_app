@@ -1,0 +1,9 @@
+/path/to/your/rails/log/.log {
+    size 50M              # triggers when file is bigger than 50M
+    dateext               # use date extension
+    dateformat -%Y%m%d-%s # the extention format
+    rotate 10             # keep 10 files
+    copytruncate          # truncates the original file
+    missingok             # does not throw error if the file is missing
+    notifempty            # does not rotate if the file is empty
+}

@@ -1,0 +1,21 @@
+---
+
+- name: "CONFIG | Manage logrotate configuration"
+  template:
+    src: templates/logrotate.j2
+    dest: "/etc/logrotate.d/rails"
+    mode: 0644
+    owner: "root"
+    group: "root"
+  tags:
+    - logging
+
+- name: ensure logrotate is in /etc/cron.weekly
+  file:
+    src: /etc/cron.daily/logrotate
+    dest: /etc/cron.weekly/logrotate
+    state: link
+    force: yes
+    mode: 0755 # the file needs to be excutable
+  tags:
+    - logging
