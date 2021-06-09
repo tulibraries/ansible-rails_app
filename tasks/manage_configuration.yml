@@ -15,7 +15,7 @@
     src: /etc/cron.daily/logrotate
     dest: /etc/cron.weekly/logrotate
     state: link
-    force: yes
-    mode: 0755 # the file needs to be excutable
+    force: true
+    mode: 0755  # the file needs to be excutable
   tags:
     - logging
