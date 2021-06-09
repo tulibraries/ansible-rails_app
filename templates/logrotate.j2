@@ -1,4 +1,6 @@
-/var/www/{{ rails_app_name }}/log/production.log {
+/var/www/{{ rails_app_name }}/log/production.log
+/var/log/httpd/*.log
+{
     size 50M              # triggers when file is bigger than 50M
     dateext               # use date extension
     dateformat -%Y%m%d-%s # the extention format
