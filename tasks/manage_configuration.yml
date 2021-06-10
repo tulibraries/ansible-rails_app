@@ -9,13 +9,3 @@
     group: "root"
   tags:
     - logging
-
-- name: ensure logrotate is in /etc/cron.daily
-  file:
-    src: /etc/cron.daily/logrotate
-    dest: /etc/cron.hourly/logrotate
-    state: link
-    force: true
-    mode: 0755  # the file needs to be excutable
-  tags:
-    - logging
