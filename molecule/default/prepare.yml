@@ -5,6 +5,11 @@
   vars:
     rails_app_user: nothing
   pre_tasks:
+    - name: Add software collections
+      yum:
+        name:
+          - centos-release-scl-rh
+        state: present
     - name: install library dependencies
       package:
         name: "{{ item }}"
