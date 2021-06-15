@@ -6,3 +6,4 @@
 - include: passenger-config.yml
   when: is_webserver
 - include: install-app.yml
+- include: manage_configuration.yml

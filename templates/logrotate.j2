@@ -1,0 +1,13 @@
+/var/www/{{ rails_app_name }}/log/production.log
+/var/log/httpd/access_log
+/var/log/httpd/error_log
+{
+    weekly
+    maxsize 50M
+    dateext
+    dateformat -%Y%m%d-%s
+    rotate 10
+    copytruncate
+    missingok
+    notifempty
+}

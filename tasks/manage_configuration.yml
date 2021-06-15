@@ -1,0 +1,11 @@
+---
+
+- name: "CONFIG | Manage logrotate configuration"
+  template:
+    src: templates/logrotate.j2
+    dest: "/etc/logrotate.d/rails"
+    mode: 0644
+    owner: "root"
+    group: "root"
+  tags:
+    - logging
