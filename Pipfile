@@ -12,7 +12,7 @@ flake8 = "*"
 testinfra = "*"
 
 [packages]
-ansible = "==2.9.20"
+ansible = "==4.2.0"
 cryptography = "==3.3.2"
 molecule = "*"
 molecule-docker = "*"
