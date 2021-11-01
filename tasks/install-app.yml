@@ -69,7 +69,6 @@
   bundler:
     state: present
     chdir: "{{ rails_app_install_path }}"
-    deployment_mode: true
     exclude_groups: "{{ rails_app_deployment_exclude_groups }}"
     executable: "{{ rails_app_bundle_exe }}"
   become: true
