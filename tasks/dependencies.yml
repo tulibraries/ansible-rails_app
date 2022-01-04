@@ -1,5 +1,11 @@
 ---
 
+- pre_tasks:
+  - name: Update ca-certificates
+    package:
+      name: ca-certificates
+      state: latest
+
 - name: Install rails dependencies
   yum:
     name: ["git-core",
