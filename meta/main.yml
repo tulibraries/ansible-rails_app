@@ -2,6 +2,8 @@
 
 galaxy_info:
   author: Chad Nelson
+  role_name: ansible_rails_app
+  namespace: tulibraries
   description: Generic Rails app role for Temple Libraries
   company: Temple University Libraries
   license: MIT

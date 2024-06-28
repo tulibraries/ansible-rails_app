@@ -1,5 +1,6 @@
 ---
 
 - src: tulibraries.ansible_role_passenger_apache
+  version: v1.0.0
 
 - src: zzet.rbenv

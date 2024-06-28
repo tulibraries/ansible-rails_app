@@ -17,7 +17,7 @@
         - patch
         - readline
         - readline-devel
-        - libyaml-devel
+        - libyaml
         - libffi-devel
         - openssl-devel
         - make
@@ -33,6 +33,11 @@
       user:
         name: "{{ rails_app_user }}"
         state: present
+    - name: Remount tmp directory without noexec
+      command: "sudo mount -o remount,exec /tmp"
+    # - name: Enable Powertools
+    #   command: "dnf --enablerepo=powertools"
+
 
   roles:
     - role: zzet.rbenv
@@ -50,9 +55,19 @@
           - { name: "rbenv-use", repo: "https://github.com/rkh/rbenv-use.git", version: "master" }
         rbenv:
           env: user
-          version: v1.1.1
-          default_ruby: 2.7.2
+          version: v1.2.0
+          default_ruby: 3.3.0
           rubies:
-            - version: 2.7.2
+            - version: 3.3.0
+        rbenv_dnf_packages:
+          - curl
+          - gcc
+          - git
+          - openssl-devel
+          - libffi-devel
+          - libyaml
+          - libyaml-devel
+          - readline-devel
+          - zlib-devel
 
     - role: tulibraries.ansible_role_passenger_apache

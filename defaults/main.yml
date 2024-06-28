@@ -19,9 +19,8 @@ yarn_version: v1.13.0
 # example
 # {envvar: "COW", value: "moo"}
 # {envvar: "COW", value: "moo", when: "{{ set_cow is defined and set_cow }}"}
-rails_app_user_envvars: []
-
-
+rails_app_user_envvars:
+   - {envvar: "TMPDIR", value: "/app/tmp"}
 rails_app_user: "{{ rails_app_name }}"
 rails_app_install_path: /var/www/{{ rails_app_name }}
 rails_app_ruby_path: /home/{{ rails_app_user }}/.rbenv/versions/{{ rbenv.default_ruby}}
@@ -56,3 +55,13 @@ using_postgres: false
 inventory_shortname: "{{ inventory_dir.split('/')[-1] }}"
 httpd_status_enable: false
 mpm_module: event
+
+rbenv_dnf_packages:
+  - curl
+  - gcc
+  - openssl-devel
+  - libyaml
+  - readline-devel
+  - zlib-devel
+  - libffi-devel
+  - git
