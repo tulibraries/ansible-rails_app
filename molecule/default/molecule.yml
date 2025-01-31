@@ -1,16 +1,15 @@
 ---
 dependency:
   name: galaxy
+  role-file: requirements.yml
 driver:
   name: docker
 platforms:
   - name: instance
-    image: rockylinux:8
-    command: /lib/systemd/systemd
+    image: "geerlingguy/docker-rockylinux9-ansible:latest"
     privileged: true
+    pre_build_image: true
     cgroupns_mode: host
-    capabilities:
-      - SYS_ADMIN
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
     tmpfs:
@@ -18,9 +17,5 @@ platforms:
       - /tmp
 provisioner:
   name: ansible
-  config_options:
-    defaults:
-      interpreter_python: /usr/bin/python3
-      ansible_python_interpreter: /usr/bin/python3
 verifier:
   name: testinfra

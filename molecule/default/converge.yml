@@ -12,6 +12,10 @@
         state: present
     - name: Remount tmp directory without noexec
       command: "sudo mount -o remount,exec /tmp"
+    - name: Enable CRB repository
+      ansible.builtin.command: dnf config-manager --set-enabled crb
+      become: true
+      changed_when: false
     # - name: Enable Powertools
     #   command: "dnf --enablerepo=powertools"
   become: true
@@ -39,12 +43,14 @@
         - autoconf
         - bzip2
         - gcc
-        - gdbm-devel
+        - git
         - openssl-devel
         - libffi-devel
+        - libyaml-devel
         - ncurses-devel
         - patch
-        - readline-devel
+        - perl-FindBin
+        - readline
         - tar
         - zlib-devel
   - role: tulibraries.ansible_role_passenger_apache
