@@ -2,28 +2,71 @@
 
 - name: Converge
   hosts: all
+  vars:
+    rails_app_name: my_app
+    rails_app_user: test_user
+  pre_tasks:
+    - name: Ensure rails app user is present.
+      user:
+        name: "{{ rails_app_user }}"
+        state: present
+    - name: Remount tmp directory without noexec
+      command: "sudo mount -o remount,exec /tmp"
+    # - name: Enable Powertools
+    #   command: "dnf --enablerepo=powertools"
   become: true
   roles:
-    - role: ansible-rails_app
-      rails_app_name: nothing
-      rails_app_git_url: https://github.com/tulibraries/rails-nihilist
-      rails_app_git_branch: main
-      rails_app_prod_secret: EXTREMELY_LONG_SECRET_VALUE
-      bundler_version: 2.3.26
-      rails_app_bundler_configs:
-        - key: "NEEDS_FLAGS"
-          value: "--with-flags"
-      set_pig: true
-      rails_app_user_envvars:
-        - {envvar: "MOO", value: "cow"}
-        - {envvar: "COW", value: "moo", when: "{{ set_cow is defined and set_cow }}"}
-        - {envvar: "PIG", value: "oink", when: "{{ set_pig is defined and set_pig }}"}
-      httpd_status_enable: true
-      mpm_module: event
-  vars:
-    rbenv:
-      env: user
-      version: v1.0.0
-      default_ruby: 3.3.0
-      rubies:
-        - version: 3.3.0
+  - role: rbenv
+    vars:
+      rbenv_users: "{{ rails_app_user }}"
+      rbenv_owner: "{{ rails_app_user }}"
+      rbenv_group: "{{ rails_app_user }}"
+      rbenv_plugins:
+        - { name: "rbenv-vars", repo: "https://github.com/rbenv/rbenv-vars.git", version: "master" }
+        - { name: "ruby-build", repo: "https://github.com/rbenv/ruby-build.git", version: "master" }
+        - { name: "rbenv-default-gems", repo: "https://github.com/rbenv/rbenv-default-gems.git", version: "master" }
+        - { name: "rbenv-installer", repo: "https://github.com/rbenv/rbenv-installer.git", version: "main" }
+        - { name: "rbenv-update", repo: "https://github.com/rkh/rbenv-update.git", version: "master" }
+        - { name: "rbenv-whatis", repo: "https://github.com/rkh/rbenv-whatis.git", version: "master" }
+        - { name: "rbenv-use", repo: "https://github.com/rkh/rbenv-use.git", version: "master" }
+      rbenv:
+        env: user
+        version: v1.3.2
+        default_ruby: 3.3.0
+        rubies:
+          - version: 3.3.0
+      rbenv_dnf_packages:
+        - autoconf
+        - bzip2
+        - gcc
+        - gdbm-devel
+        - openssl-devel
+        - libffi-devel
+        - ncurses-devel
+        - patch
+        - readline-devel
+        - tar
+        - zlib-devel
+  - role: tulibraries.ansible_role_passenger_apache
+  - role: ansible-rails_app
+    rails_app_git_url: https://github.com/tulibraries/rails-nihilist
+    rails_app_git_branch: main
+    rails_app_prod_secret: EXTREMELY_LONG_SECRET_VALUE
+    bundler_version: 2.3.26
+    rails_app_bundler_configs:
+      - key: "NEEDS_FLAGS"
+        value: "--with-flags"
+    set_pig: true
+    rails_app_user_envvars:
+      - {envvar: "MOO", value: "cow"}
+      - {envvar: "COW", value: "moo", when: "{{ set_cow is defined and set_cow }}"}
+      - {envvar: "PIG", value: "oink", when: "{{ set_pig is defined and set_pig }}"}
+    httpd_status_enable: true
+    mpm_module: event
+    vars:
+      rbenv:
+        env: user
+        version: v1.0.0
+        default_ruby: 3.3.0
+        rubies:
+          - version: 3.3.0
