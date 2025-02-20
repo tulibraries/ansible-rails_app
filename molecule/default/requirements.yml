@@ -2,11 +2,4 @@
 
 - src: https://github.com/tulibraries/ansible-role-passenger-apache.git
   name: tulibraries.ansible_role_passenger_apache
-  version: v1.0.0
-
-- src: https://github.com/zzet/rbenv.git
-  name: rbenv
-  version: 3.6.0
-
-  -src: https://github.com/tulibraries/ansible-rails_app.git
-  name: ansible-rails_app
+  version: v2.1.4

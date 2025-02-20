@@ -1,7 +1,7 @@
 ---
 
 - name: Check if the schema_migrations table exists
-  postgresql_query:
+  community.postgresql.postgresql_query:
     db: manifold
     query: "SELECT to_regclass('public.schema_migrations');"
   register: pgq
@@ -13,8 +13,8 @@
     - rails_app
     - db
 
-- name: Setup the postgres DB the first time this runs (please)
-  command: >
+- name: Setup the PostgreSQL DB the first time this runs
+  ansible.builtin.command: >
     bash -lc 'RAILS_ENV={{ rails_app_env }} DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rails db:schema:load'
   args:
     chdir: "{{ rails_app_install_path }}"

@@ -3,12 +3,12 @@
 ## dependencies.yml
 # default to no app specific dependencies to install
 rails_app_additional_dependencies: []
-
-
-nodejs_major_version: 23
-nodejs_version: 23.6.1
+nodejs_major_version: 22
+nodejs_version: 22.14.0
+ruby_version: 3.4.1
+ruby_abi_version: "{{ ruby_version | regex_replace('^(\\d+\\.\\d+)\\.\\d+$', '\\1.0') }}"
 rails_app_use_webpack: true
-yarn_version: v4.6.0
+yarn_version: 1.22.22
 
 # Define env vars that will be available to the app via a .env file
 # list items should be an array with two required and one possible value
@@ -23,7 +23,7 @@ rails_app_user_envvars:
    - {envvar: "TMPDIR", value: "/app/tmp"}
 rails_app_user: "{{ rails_app_name }}"
 rails_app_install_path: /var/www/{{ rails_app_name }}
-rails_app_ruby_path: /home/{{ rails_app_user }}/.rbenv/versions/{{ rbenv.default_ruby}}
+rails_app_ruby_path: /home/{{ rails_app_user }}/.rbenv/versions/{{ ruby_version }}
 rails_app_bundle_exe: "{{rails_app_ruby_path}}/bin/bundle"
 rails_app_gem_path: "{{rails_app_ruby_path}}/lib/ruby/gems"
 rails_app_url_base_path: "/"
@@ -31,9 +31,11 @@ rails_app_use_ssl: false
 rails_app_force_ssl: false
 rails_app_default_config:
   - secrets.yml
+
 # Override to add custom config files from templates
 rails_app_additional_config: []
 rails_app_env: production
+rails_app_key: fake_secret_key
 rails_app_deployment_exclude_groups:
   - test
   - development
@@ -55,13 +57,6 @@ using_postgres: false
 inventory_shortname: "{{ inventory_dir.split('/')[-1] }}"
 httpd_status_enable: false
 mpm_module: event
+rbenv_user_profile: true
 
-rbenv_dnf_packages:
-  - curl
-  - gcc
-  - openssl-devel
-  - libyaml
-  - readline-devel
-  - zlib-devel
-  - libffi-devel
-  - git
+

@@ -1,90 +1,85 @@
 ---
 
 - name: Install rails dependencies
-  yum:
-    name: ["git-core",
-           "zlib",
-           "zlib-devel",
-           "gcc-c++",
-           "patch",
-           "readline",
-           "readline-devel",
-           "libyaml-devel",
-           "libffi-devel",
-           "openssl-devel",
-           "make",
-           "bzip2",
-           "autoconf",
-           "automake",
-           "libtool",
-           "bison",
-           "curl",
-           "sqlite-devel",
-           "epel-release"]
+  ansible.builtin.dnf:
+    name:
+      - bison
+      - gcc-c++
+      - git-core
+      - zlib
+      - patch
+      - readline
+      - epel-release
     state: present
   become: true
 
+- name: Check for installed node versions
+  ansible.builtin.command: "dnf list installed | grep nodejs"
+  register: node_check
+  changed_when: false
+  failed_when: false
+
 - name: Check current node version
-  shell: node --version 2>&1
+  ansible.builtin.shell: node --version 2>&1
   register: installed_node_version
   failed_when: false  # noqa 301
   changed_when: false
 
-- name: Remove old nodejs versions and configs
-  block:
-    - name: remove old versions of node
-      yum:
-        name: nodejs
-        state: absent
+- name: Remove old versions of node
+  ansible.builtin.dnf:
+    name: nodejs
+    state: absent
+  become: true
+  when: node_check.stdout != ""
 
-    - name: get a list nodesource repo configs
-      find:
-        paths: /etc/yum.repos.d/
-        patterns: "nodesource*.repo"
-      register: nodesource_yum_repos
-
-    - name: remove old nodesource repo configs
-      file:
-        path: "{{ item.path }}"
-        state: absent
-      loop: "{{ nodesource_yum_repos.files }}"
-
-    - name: clean the cache so old repo config get fully removed
-      command: yum clean all
-      args:
-        warn: false
-  when: installed_node_version.stdout is not regex("v{{ nodejs_major_version }}.*")  # noqa 102
-
-- name: Import Nodesource RPM key
-  rpm_key:
-    key: https://rpm.nodesource.com/pub/el/NODESOURCE-GPG-SIGNING-KEY-EL
+- name: Ensure Passenger is installed after node removal
+  ansible.builtin.dnf:
+    name: 
+      - passenger
+      - mod_passenger
     state: present
+  become: true
 
-- name: Add Nodesource repositories for Node.js
-  yum_repository:
-    name: nodesource
-    description: "nodesource package of nodejs for $basearch"
-    baseurl: "https://rpm.nodesource.com/pub_{{ nodejs_major_version }}.x/el/{{ ansible_distribution_major_version }}/$basearch"  # noqa 204
-    gpgcheck: true
-    state: present
+- name: Refresh dnf metadata
+  ansible.builtin.command:
+    cmd: dnf makecache --refresh
+  when: installed_node_version.stdout is not regex('v' ~ nodejs_major_version | string ~ '.*')
 
-- name: Ensure Node.js and npm are installed.
-  yum:
-    name: "nodejs-{{ nodejs_version }}"
+- name: Download and execute NodeSource setup script
+  ansible.builtin.get_url:
+    url: https://rpm.nodesource.com/setup_22.x
+    dest: /tmp/nodesource_setup.sh
+    mode: '0755'
+
+- name: Run NodeSource setup script
+  ansible.builtin.command:
+    cmd: /tmp/nodesource_setup.sh
+  args:
+    creates: /etc/yum.repos.d/nodesource.repo
+
+- name: Install Node.js using dnf
+  ansible.builtin.dnf:
+    name: nodejs
     state: present
-    enablerepo: "nodesource"
+    update_cache: yes
+
+- name: Ensure Node.js and npm are installed
+  ansible.builtin.dnf:
+    name: nodejs
+    state: present
+    enablerepo: nodesource
     update_cache: true
 
 - name: Install yarn node package if this project needs it
-  npm:
+  ansible.builtin.npm:
     name: yarn
     global: true
     state: present
     version: "{{ yarn_version }}"
   when: rails_app_use_webpack is defined and rails_app_use_webpack
 
-- name: Install app specifc dependencies
-  yum:
+- name: Install app specific dependencies
+  ansible.builtin.dnf:
     name: "{{ rails_app_additional_dependencies | default([]) }}"
     state: present
   become: true

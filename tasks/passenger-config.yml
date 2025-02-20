@@ -1,33 +1,48 @@
 ---
 
-- name: template apache config for all.yml applications on port 80
-  template:
+- name: Ensure Passenger module is loaded
+  lineinfile:
+    path: /etc/httpd/conf.modules.d/00-passenger.conf
+    line: "LoadModule passenger_module modules/mod_passenger.so"
+    create: yes
+  notify: restart apache
+  become: true
+
+- name: Enable and start Apache service
+  systemd:
+    name: httpd
+    state: started
+    enabled: yes
+  become: true
+
+- name: Template Apache config for all.yml applications on port 80
+  ansible.builtin.template:
     src: applications.conf.j2
     dest: /etc/httpd/conf.d/applications.conf
-    mode: 0644
+    mode: '0644'
   become: true
   notify: restart apache
   tags:
     - rails_app
     - passenger
 
-- include: ssl.yml
+- ansible.builtin.include_tasks: ssl.yml
   when: app_use_ssl
   tags:
     - ssl
 
-- name: create applications conf directory
-  file:
+- name: Create applications conf directory
+  ansible.builtin.file:
     path: /etc/httpd/conf.d/applications
     state: directory
-    mode: 0644
+    mode: '0755'
   become: true
   tags:
     - rails_app
     - passenger
 
-- name: Check if the application specific config exists
-  stat:
+- name: Check if the application-specific config exists
+  ansible.builtin.stat:
     path: /etc/httpd/conf.d/applications/{{ rails_app_name }}.conf-fragment
   register: app_httpd_config
   changed_when: not app_httpd_config.stat.exists
@@ -36,21 +51,21 @@
     - passenger
 
 - name: Write MPM module to use event
-  template:
+  ansible.builtin.template:
     src: mpm_module.conf.j2
     dest: /etc/httpd/conf.modules.d/00-mpm.conf
-    mode: 0644
+    mode: '0644'
   become: true
   notify: restart apache
   tags:
     - rails_app
     - passenger
 
-- name: Put the applications specific template in place
-  template:
+- name: Put the application-specific template in place
+  ansible.builtin.template:
     src: conf-fragment.j2
     dest: /etc/httpd/conf.d/applications/{{ rails_app_name }}.conf-fragment
-    mode: 0644
+    mode: '0644'
   become: true
   notify: restart apache
   tags:
@@ -58,10 +73,10 @@
     - passenger
 
 # The order of handlers is unpredictable. Sometimes when an app config is first created
-# ansble tries to restart passenger app before apache is restarted, which then fails the playbook
-# @TODO Better solution is to move this config task to it's own play.
-- name: Force restart apache when the config added for first time
-  service:
+# Ansible tries to restart the Passenger app before Apache is restarted, which then fails the playbook.
+# @TODO A better solution is to move this config task to its own play.
+- name: Force restart Apache when the config is added for the first time
+  ansible.builtin.service:
     name: httpd
     state: restarted
   when: not app_httpd_config.stat.exists

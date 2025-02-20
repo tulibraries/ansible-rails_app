@@ -1,12 +1,32 @@
 ---
+scenario:
+  name: default
+  test_sequence:
+      - cleanup
+      - destroy
+      - dependency
+      - syntax
+      - create
+      - prepare
+      - converge
+      # - idempotence
+      - side_effect
+      - verify
+      - cleanup
+      - destroy
 dependency:
   name: galaxy
   role-file: requirements.yml
+  collections:
+    - community.general
 driver:
   name: docker
 platforms:
   - name: instance
     image: "geerlingguy/docker-rockylinux9-ansible:latest"
+    command: /lib/systemd/systemd
+    capabilities:
+      - SYS_ADMIN
     privileged: true
     pre_build_image: true
     cgroupns_mode: host
@@ -14,7 +34,7 @@ platforms:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
     tmpfs:
       - /run
-      - /tmp
+      - /tmp:rw,exec,nosuid
 provisioner:
   name: ansible
 verifier:
