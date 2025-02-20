@@ -3,10 +3,10 @@
 - name: "CONFIG | Manage logrotate configuration"
   ansible.builtin.template:
     src: templates/logrotate.j2
-    dest: "/etc/logrotate.d/rails"
-    mode: "0644"
-    owner: "root"
-    group: "root"
+    dest: /etc/logrotate.d/rails
+    mode: 0644
+    owner: root
+    group: root
   tags:
     - logging
 

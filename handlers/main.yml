@@ -2,7 +2,7 @@
 
 - name: deploy yarn
   ansible.builtin.shell: >
-    bash -lc 'RAILS_ENV={{ rails_app_env }} NODE_ENV=production /usr/local/bin/yarn install --frozen-lockfile --prod'
+    bash -lc 'RAILS_ENV={{ rails_app_env }} NODE_ENV=production /usr/bin/yarn install --frozen-lockfile --prod'
   args:
     chdir: "{{ rails_app_install_path }}"
   become: true

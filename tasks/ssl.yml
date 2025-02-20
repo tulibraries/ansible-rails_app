@@ -4,7 +4,7 @@
   ansible.builtin.copy:
     src: "{{ inventory_shortname }}/{{ item.src }}"
     dest: "{{ item.dest }}"
-    mode: "0644"
+    mode: 0644
   with_items:
     - src: server.crt
       dest: "{{ app_ssl_cert_path }}"
@@ -26,7 +26,7 @@
   ansible.builtin.copy:
     src: globalsign-intermediate.crt
     dest: "{{ app_ssl_intermediate_path }}"
-    mode: "0644"
+    mode: 0644
   become: true
   when: app_use_intermediate_cert | default(False)
   notify: restart apache
@@ -39,7 +39,7 @@
   ansible.builtin.template:
     src: ssl.conf.j2
     dest: /etc/httpd/conf.d/ssl.conf
-    mode: "0644"
+    mode: 0644
   become: true
   notify: restart apache
   tags:

@@ -54,7 +54,7 @@
   ansible.builtin.template:
     src: mpm_module.conf.j2
     dest: /etc/httpd/conf.modules.d/00-mpm.conf
-    mode: '0644'
+    mode: 0644
   become: true
   notify: restart apache
   tags:
@@ -65,7 +65,7 @@
   ansible.builtin.template:
     src: conf-fragment.j2
     dest: /etc/httpd/conf.d/applications/{{ rails_app_name }}.conf-fragment
-    mode: '0644'
+    mode: 0644
   become: true
   notify: restart apache
   tags:

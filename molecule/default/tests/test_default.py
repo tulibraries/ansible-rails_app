@@ -17,18 +17,18 @@ def test_httpd_application_conf_created(host):
 
 
 def test_rails_app_in_place(host):
-    app_dir = host.file("/var/www/nothing")
+    app_dir = host.file("/var/www/test_app")
     assert app_dir.is_directory
 
 
 def test_bundle_config_in_place(host):
-    f = host.file("/home/nothing/.bundle/config")
+    f = host.file("/home/test_app/.bundle/config")
     assert f.exists
     assert f.contains("NEEDS_FLAGS: \"--with-flags\"")
 
 
 def test_rails_app_user_envvars(host):
-    env = host.file("/var/www/nothing/.env.local")
+    env = host.file("/var/www/test_app/.env.local")
     assert env.exists
     assert env.contains("MOO='cow'")
     assert env.contains("PIG='oink'")
