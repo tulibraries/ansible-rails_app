@@ -32,14 +32,6 @@
   become: true
   when: node_check.stdout != ""
 
-- name: Ensure Passenger is installed after node removal
-  ansible.builtin.dnf:
-    name: 
-      - passenger
-      - mod_passenger
-    state: present
-  become: true
-
 - name: Refresh dnf metadata
   ansible.builtin.command:
     cmd: dnf makecache --refresh
@@ -47,7 +39,7 @@
 
 - name: Download and execute NodeSource setup script
   ansible.builtin.get_url:
-    url: https://rpm.nodesource.com/setup_22.x
+    url: "https://rpm.nodesource.com/setup_{{ nodejs_major_version }}.x"
     dest: /tmp/nodesource_setup.sh
     mode: '0755'
 
@@ -59,9 +51,19 @@
 
 - name: Install Node.js using dnf
   ansible.builtin.dnf:
-    name: nodejs
+    name: "nodejs-{{ nodejs_version }}"
     state: present
     update_cache: yes
+    enablerepo: nodesource-nodejs
+    nobest: yes
+
+- name: Ensure Passenger is installed after node removal
+  ansible.builtin.dnf:
+    name: 
+      - passenger
+      - mod_passenger
+    state: present
+  become: true
 
 - name: Ensure Node.js and npm are installed
   ansible.builtin.dnf:

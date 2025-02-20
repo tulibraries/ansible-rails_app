@@ -38,4 +38,4 @@ def test_rails_app_user_envvars(host):
 def test_node_version(host):
     cmd = host.run("node --version")
     assert cmd.rc == 0
-    assert cmd.stdout.rstrip() == "v23.7.0"
+    assert cmd.stdout.rstrip() == "v23.8.0"

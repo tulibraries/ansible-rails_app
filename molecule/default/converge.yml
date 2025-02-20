@@ -3,8 +3,8 @@
 - name: Converge
   hosts: all
   vars:
-    nodejs_major_version: 22
-    nodejs_version: 22.14.0
+    nodejs_major_version: 23
+    nodejs_version: 23.8.0
     rails_app_name: test_app
     rails_app_user: test_app
     ruby_version: 3.4.1
