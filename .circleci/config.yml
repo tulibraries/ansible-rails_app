@@ -9,6 +9,9 @@ jobs:
           PIPENV_VENV_IN_PROJECT: true
     steps:
       - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:XXg1PTcrj2uSJLVW+HkXJ5+ARo30Uoo+kNFq9Ik6imk"
       - run:
           name: Install
           command: pipenv install --dev
