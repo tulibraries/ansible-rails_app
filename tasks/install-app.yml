@@ -1,13 +1,22 @@
 ---
 
-- name: make sure the app dir exists and is owner by app user
-  file:
+- name: Make sure the app dir exists and is owned by the app user
+  ansible.builtin.file:
     path: "{{ rails_app_install_path }}/"
     state: directory
     owner: "{{ rails_app_user }}"
 
-- name: checkout the rails app code from source control
-  git:
+- name: Ensure rbenv versions directory is owned by the correct user
+  ansible.builtin.file:
+    path: "/home/{{ rails_app_user }}/.rbenv/versions/{{ ruby_version }}"
+    state: directory
+    owner: "{{ rails_app_user }}"
+    group: "{{ rails_app_user }}"
+    recurse: yes
+  become: true
+
+- name: Checkout the Rails app code from source control
+  ansible.builtin.git:
     repo: "{{ rails_app_git_url }}"
     dest: "{{ rails_app_install_path }}"
     version: "{{ rails_app_git_branch }}"
@@ -22,8 +31,8 @@
   tags:
     - rails_app
 
-- name: check if bundler is already installed
-  command: bash -lc 'RAILS_ENV={{ rails_app_env }} bundle --help'
+- name: Check if Bundler is already installed
+  ansible.builtin.command: bash -lc 'RAILS_ENV={{ rails_app_env }} bundle --help'
   args:
     chdir: "{{ rails_app_install_path }}"
   register: bundler_present
@@ -35,8 +44,8 @@
   tags:
     - rails_app
 
-- name: Optionally manage bundler version if required
-  command: bash -lc 'gem install bundler -v {{ bundler_version }}'
+- name: Optionally manage Bundler version if required
+  ansible.builtin.command: bash -lc 'gem install bundler -v {{ bundler_version }}'
   when: bundler_version is defined and bundler_present.rc != 0
   become: true
   become_user: "{{ rails_app_user }}"
@@ -44,9 +53,9 @@
     - rails_app
 
 - name: Ensure the .bundle directory exists
-  file:
+  ansible.builtin.file:
     state: directory
-    dest: "/home/{{ rails_app_user }}/.bundle"
+    path: "/home/{{ rails_app_user }}/.bundle"
     owner: "{{ rails_app_user }}"
     group: "{{ rails_app_user }}"
   become: true
@@ -55,7 +64,7 @@
     - rails_app
 
 - name: Set Bundler config options in ~/.bundle/config
-  template:
+  ansible.builtin.template:
     src: bundler_config.j2
     dest: "/home/{{ rails_app_user }}/.bundle/config"
     owner: "{{ rails_app_user }}"
@@ -65,19 +74,25 @@
   tags:
     - rails_app
 
-- name: bundle install the app gems dependencies
-  bundler:
-    state: present
+- name: Set Bundler config to exclude test and development groups
+  ansible.builtin.command:
+    cmd: bash -lc 'bundle config set --without test development'
+  become: true
+  become_user: "{{ rails_app_user }}"
+  tags:
+    - rails_app
+
+- name: Install gem dependencies using Bundler
+  ansible.builtin.command:
+    cmd: bash -lc 'bundle install'
+  args:
     chdir: "{{ rails_app_install_path }}"
-    deployment_mode: true
-    exclude_groups: "{{ rails_app_deployment_exclude_groups }}"
-    executable: "{{ rails_app_bundle_exe }}"
   become: true
   become_user: "{{ rails_app_user }}"
   register: bundled
   changed_when: "'Installing' in bundled.stdout"
   environment:
-    - RAILS_ENV: "{{ rails_app_env }}"
+    RAILS_ENV: "{{ rails_app_env }}"
   notify:
     - restart passenger app
     - deploy yarn
@@ -85,8 +100,8 @@
   tags:
     - rails_app
 
-- name: Add basic rails configuration files
-  template:
+- name: Add basic Rails configuration files
+  ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "{{ rails_app_install_path }}/config/{{ item }}"
   with_items: "{{ rails_app_default_config }}"
@@ -97,8 +112,8 @@
   tags:
     - rails_app
 
-- name: Add additional rails configuration files
-  template:
+- name: Add additional Rails configuration files
+  ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "{{ rails_app_install_path }}/config/{{ item }}"
   with_items: "{{ rails_app_additional_config }}"
@@ -110,7 +125,7 @@
     - rails_app
 
 - name: Create a .env file in the root of the app
-  template:
+  ansible.builtin.template:
     dest: "{{ rails_app_install_path }}/.env.local"
     src: .env.local.j2
   become: true
@@ -121,15 +136,15 @@
     - rails_app
 
 - name: Check if an inventory env file exists in the app
-  stat:
+  ansible.builtin.stat:
     path: "{{ rails_app_install_path }}/.env.{{ inventory_shortname }}"
   register: inventory_env
   changed_when: false
   tags:
     - rails_app
 
-- name: create symlink to inventory env file if it exists
-  file:
+- name: Create symlink to inventory env file if it exists
+  ansible.builtin.file:
     state: link
     src: "{{ rails_app_install_path }}/.env.{{ inventory_shortname }}"
     dest: "{{ rails_app_install_path }}/.env"
@@ -141,11 +156,11 @@
   tags:
     - rails_app
 
-- include: db.yml
+- ansible.builtin.include_tasks: db.yml
   when: using_postgres
 
 - name: Trigger deploy tasks if vendor/bundle does not exist
-  stat:
+  ansible.builtin.stat:
     path: "{{ rails_app_install_path }}/vendor/bundle"
   register: vendor_bundle
   changed_when: "vendor_bundle.stat.isdir is undefined"
@@ -155,7 +170,7 @@
     - rails_app
 
 - name: Trigger deploy tasks if public/assets does not exist
-  stat:
+  ansible.builtin.stat:
     path: "{{ rails_app_install_path }}/public/assets"
   register: public_assets
   changed_when: "public_assets.stat.isdir is undefined"

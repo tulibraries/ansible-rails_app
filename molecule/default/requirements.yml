@@ -1,5 +1,5 @@
 ---
 
-- src: tulibraries.ansible_role_passenger_apache
-
-- src: zzet.rbenv
+- src: https://github.com/tulibraries/ansible-role-passenger-apache.git
+  name: tulibraries.ansible_role_passenger_apache
+  version: v2.1.4

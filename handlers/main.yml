@@ -1,22 +1,19 @@
 ---
 
 - name: deploy yarn
-  shell: >
-    bash -lc 'RAILS_ENV={{ rails_app_env }} NODE_ENV=production {{ item }}'
+  ansible.builtin.shell: >
+    bash -lc 'RAILS_ENV={{ rails_app_env }} NODE_ENV=production /usr/bin/yarn install --frozen-lockfile --prod'
   args:
-    chdir: "{{ rails_app_install_path }}"  # noqa 305
-  with_items:
-    - "yarn install --frozen-lockfile --prod"
+    chdir: "{{ rails_app_install_path }}"
   become: true
-  become_user: "{{ rails_app_user }}"
   when: rails_app_use_webpack is defined and rails_app_use_webpack
   notify: deploy tasks
   tags:
     - app
 
 - name: deploy tasks
-  command: >
-    bash -lc 'RAILS_ENV={{ rails_app_env }} bundle exec rails {{ item }}'
+  ansible.builtin.command: >
+    bash -lc 'RAILS_ENV={{ rails_app_env }} SECRET_KEY_BASE={{ rails_app_key }} bundle exec rails {{ item }}'
   args:
     chdir: "{{ rails_app_install_path }}"
   with_items:
@@ -24,7 +21,7 @@
     - assets:precompile
   become: true
   become_user: "{{ rails_app_user }}"
-  when: is_webserver
+  when: is_webserver 
   notify:
     - restart passenger app
     - migrate db
@@ -32,8 +29,8 @@
     - rails_app
 
 - name: migrate db
-  command: >
-    bash -lc 'RAILS_ENV={{ rails_app_env }} bundle exec rails {{ item }}'
+  ansible.builtin.command: >
+    bash -lc 'RAILS_ENV={{ rails_app_env }} SECRET_KEY_BASE={{ rails_app_key }} bundle exec rails {{ item }}'
   args:
     chdir: "{{ rails_app_install_path }}"
   with_items:
@@ -47,7 +44,7 @@
     - rails_app
 
 - name: restart passenger app
-  command: >
+  ansible.builtin.command: >
     bash -lc 'passenger-config restart-app `pwd`'
   args:
     chdir: "{{ rails_app_install_path }}"
@@ -59,7 +56,7 @@
     - rails-app
 
 - name: restart apache
-  service:
+  ansible.builtin.service:
     name: httpd
     state: restarted
   become: true
@@ -68,7 +65,7 @@
     - rails_app
 
 - name: restart solr
-  service:
+  ansible.builtin.service:
     name: solr
     state: restarted
   become: true
