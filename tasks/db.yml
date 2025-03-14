@@ -9,6 +9,7 @@
   become_user: postgres
   delegate_to: "{{ rails_app_db_machine | default(omit, true) }}"
   changed_when: pgq.query_result[0]['to_regclass'] is none
+  not_changed_when: pgq.query_result[0]['to_regclass'] is not none
   when: rails_app_using_postgres
   tags:
     - rails_app
@@ -19,10 +20,10 @@
     bash -lc 'RAILS_ENV={{ rails_app_env }} DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rails db:schema:load'
   args:
     chdir: "{{ rails_app_install_path }}"
-  when: pgq.query_result[0]['to_regclass'] is none
   become: true
   become_user: "{{ rails_app_user }}"
-  when: rails_app_using_postgres
+  not_changed_when: pgq.query_result[0]['to_regclass'] is not none
+  when: rails_app_using_postgres and pgq.query_result[0]['to_regclass'] is none
   tags:
     - rails_app
     - db
