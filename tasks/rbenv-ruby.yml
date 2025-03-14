@@ -123,7 +123,7 @@
 - name: Install Ruby version using rbenv
   ansible.builtin.shell: |
     source /home/{{ rails_app_user }}/.bash_profile
-    rbenv install {{ ruby_version }} -s
+    rbenv install {{ rails_app_ruby_version }} -s
     rbenv rehash
   become_user: "{{ rails_app_user }}"
   tags:

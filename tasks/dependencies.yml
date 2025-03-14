@@ -35,11 +35,11 @@
 - name: Refresh dnf metadata
   ansible.builtin.command:
     cmd: dnf makecache --refresh
-  when: installed_node_version.stdout is not regex('v' ~ nodejs_major_version | string ~ '.*')
+  when: installed_node_version.stdout is not regex('v' ~ rails_app_nodejs_major_version | string ~ '.*')
 
 - name: Download and execute NodeSource setup script
   ansible.builtin.get_url:
-    url: "https://rpm.nodesource.com/setup_{{ nodejs_major_version }}.x"
+    url: "https://rpm.nodesource.com/setup_{{ rails_app_nodejs_major_version }}.x"
     dest: /tmp/nodesource_setup.sh
     mode: '0755'
 
@@ -77,7 +77,7 @@
     name: yarn
     global: true
     state: present
-    version: "{{ yarn_version }}"
+    version: "{{ rails_app_yarn_version }}"
   when: rails_app_use_webpack is defined and rails_app_use_webpack
 
 - name: Install app specific dependencies

@@ -27,7 +27,7 @@
     - passenger
 
 - ansible.builtin.include_tasks: ssl.yml
-  when: app_use_ssl
+  when: rails_app_use_ssl
   tags:
     - ssl
 

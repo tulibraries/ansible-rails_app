@@ -3,14 +3,14 @@
 - name: Converge
   hosts: all
   vars:
-    nodejs_major_version: 23
-    nodejs_version: 23.8.0
+    rails_app_nodejs_major_version: 23
+    rails_app_nodejs_version: 23.8.0
     rails_app_name: test_app
     rails_app_user: test_app
-    ruby_version: 3.4.1
-    ruby_abi_version: "{{ ruby_version | regex_replace('^(\\d+\\.\\d+)\\.\\d+$', '\\1.0') }}"
-    bundler_version: 2.6.2
-    rbenv_user_profile: true
+    rails_app_ruby_version: 3.4.1
+    rails_app_ruby_abi_version: "{{ rails_app_ruby_version | regex_replace('^(\\d+\\.\\d+)\\.\\d+$', '\\1.0') }}"
+    rails_app_bundler_version: 2.6.2
+    rails_app_rbenv_user_profile: true
     rails_app_use_webpack: true
     rails_app_git_url: https://github.com/tulibraries/rails-nihilist
     rails_app_git_branch: main
@@ -24,8 +24,8 @@
       - {envvar: "COW", value: "moo", when: "{{ set_cow is defined and set_cow }}"}
       - {envvar: "PIG", value: "oink", when: "{{ set_pig is defined and set_pig }}"}
 
-    httpd_status_enable: true
-    mpm_module: event
+    rails_app_httpd_status_enable: true
+    rails_app_mpm_module: event
 
   pre_tasks:
     - name: Ensure rails app user is present.

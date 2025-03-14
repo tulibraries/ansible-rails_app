@@ -30,14 +30,14 @@ Header always set X-Content-Type-Options nosniff
     DocumentRoot /var/www/html
     PassengerRuby /usr/bin/ruby
 
-    {% if app_set_root_redirect %}
-    RedirectMatch ^/$ {{ app_root_redirect }}
+    {% if rails_app_set_root_redirect %}
+    RedirectMatch ^/$ {{ rails_app_root_redirect }}
     {% endif %}
 
     #include app specific configs in the applications directory
     Include conf.d/applications/*.conf-fragment
 
-    {% if httpd_status_enable %}
+    {% if rails_app_httpd_status_enable %}
       <IfModule mod_status.c>
         <Location /server-status>
           SetHandler server-status
