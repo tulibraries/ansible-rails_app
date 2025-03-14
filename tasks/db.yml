@@ -22,7 +22,9 @@
     chdir: "{{ rails_app_install_path }}"
   become: true
   become_user: "{{ rails_app_user }}"
-  not_changed_when: pgq.query_result[0]['to_regclass'] is not none
+  register: db_schema_load_result
+  changed_when: "'Schema loaded' in db_schema_load_result.stdout or 'created' in db_schema_load_result.stdout"
+  not_changed_when: "'schema already exists' in db_schema_load_result.stdout or 'already up to date' in db_schema_load_result.stdout"
   when: rails_app_using_postgres and pgq.query_result[0]['to_regclass'] is none
   tags:
     - rails_app
