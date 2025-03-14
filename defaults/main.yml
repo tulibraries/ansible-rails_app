@@ -20,7 +20,7 @@ rails_app_yarn_version: 1.22.22
 # {envvar: "COW", value: "moo"}
 # {envvar: "COW", value: "moo", when: "{{ set_cow is defined and set_cow }}"}
 rails_app_user_envvars:
-   - {envvar: "TMPDIR", value: "/app/tmp"}
+  - {envvar: "TMPDIR", value: "/app/tmp"}
 rails_app_user: "{{ rails_app_name }}"
 rails_app_install_path: /var/www/{{ rails_app_name }}
 rails_app_ruby_path: /home/{{ rails_app_user }}/.rbenv/versions/{{ ruby_version }}
