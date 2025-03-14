@@ -12,7 +12,7 @@
     state: directory
     owner: "{{ rails_app_user }}"
     group: "{{ rails_app_user }}"
-    recurse: yes
+    recurse: true
   become: true
 
 - name: Checkout the Rails app code from source control
@@ -41,12 +41,14 @@
   when: bundler_version is defined
   failed_when: false
   changed_when: bundler_present.rc != 0
+  not_changed_when: bundler_present.rc == 0
   tags:
     - rails_app
 
 - name: Optionally manage Bundler version if required
   ansible.builtin.command: bash -lc 'gem install bundler -v {{ bundler_version }}'
   when: bundler_version is defined and bundler_present.rc != 0
+  not_changed_when: bundler_version is defined and bundler_present.rc == 0
   become: true
   become_user: "{{ rails_app_user }}"
   tags:
@@ -78,6 +80,9 @@
   ansible.builtin.command:
     cmd: bash -lc 'bundle config set --without test development'
   become: true
+  register: result
+  changed_when: "'test' in result.stdout or 'development' in result.stdout"
+  not_changed_when: "'test' not in result.stdout and 'development' not in result.stdout"
   become_user: "{{ rails_app_user }}"
   tags:
     - rails_app
@@ -91,6 +96,7 @@
   become_user: "{{ rails_app_user }}"
   register: bundled
   changed_when: "'Installing' in bundled.stdout"
+  not_changed_when: "'Installing' not in bundled.stdout"
   environment:
     RAILS_ENV: "{{ rails_app_env }}"
   notify:
@@ -156,7 +162,8 @@
   tags:
     - rails_app
 
-- ansible.builtin.include_tasks: db.yml
+- name: "Run the db tasks"
+  ansible.builtin.include_tasks: db.yml
   when: using_postgres
 
 - name: Trigger deploy tasks if vendor/bundle does not exist
