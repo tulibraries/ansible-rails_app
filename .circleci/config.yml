@@ -17,5 +17,8 @@ jobs:
           command: pipenv install --dev
       - setup_remote_docker
       - run:
+          name: Lint the role
+          command: pipenv run ansible-lint . --exclude=molecule/default/roles
+      - run:
           name: Molecule
           command: pipenv run molecule test
