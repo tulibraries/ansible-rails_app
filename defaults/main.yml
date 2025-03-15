@@ -24,8 +24,8 @@ rails_app_user_envvars:
 rails_app_user: "{{ rails_app_name }}"
 rails_app_install_path: /var/www/{{ rails_app_name }}
 rails_app_ruby_path: /home/{{ rails_app_user }}/.rbenv/versions/{{ ruby_version }}
-rails_app_bundle_exe: "{{rails_app_ruby_path}}/bin/bundle"
-rails_app_gem_path: "{{rails_app_ruby_path}}/lib/ruby/gems"
+rails_app_bundle_exe: "{{ rails_app_ruby_path }}/bin/bundle"
+rails_app_gem_path: "{{ rails_app_ruby_path }}/lib/ruby/gems"
 rails_app_url_base_path: "/"
 rails_app_default_config:
   - secrets.yml

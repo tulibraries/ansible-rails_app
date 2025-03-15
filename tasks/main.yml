@@ -1,9 +1,14 @@
 ---
 # tasks file for rails_app
 
-- include_tasks: rbenv-ruby.yml
-- include_tasks: dependencies.yml
-- include_tasks: passenger-config.yml
+- name: Include rbenv and ruby tasks
+  ansible.builtin.include_tasks: rbenv-ruby.yml
+- name: Include ependencies tasks
+  ansible.builtin.include_tasks: dependencies.yml
+- name: Include passenger config tasks
+  ansible.builtin.include_tasks: passenger-config.yml
   when: is_webserver
-- include_tasks: install-app.yml
-- include_tasks: manage-configuration.yml
+- name: Include install app tasks
+  ansible.builtin.include_tasks: install-app.yml
+- name: Include manage configuration tasks
+  ansible.builtin.include_tasks: manage-configuration.yml

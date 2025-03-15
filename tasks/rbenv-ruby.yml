@@ -30,19 +30,24 @@
     - ruby
 
 - name: Check existing Git safe directories
-  ansible.builtin.command: git config --global --get-all safe.directory
+  community.general.git_config:
+    name: safe.directory
+    scope: global
+  become: true
   become_user: "{{ rails_app_user }}"
   register: git_safe_dirs
-  changed_when: false
-  failed_when: false  # Prevent failure if no safe directories exist
 
 - name: Mark rbenv and ruby-build directories as safe for Git
-  ansible.builtin.command: git config --global --add safe.directory "{{ item }}"
+  community.general.git_config:
+    name: safe.directory
+    value: "{{ item }}"
+    scope: global
+    state: present
+  become: true
   become_user: "{{ rails_app_user }}"
   with_items:
     - "/home/{{ rails_app_user }}/.rbenv"
     - "/home/{{ rails_app_user }}/.rbenv/plugins/ruby-build"
-  when: item not in git_safe_dirs.stdout_lines
   tags:
     - ruby
 
@@ -51,8 +56,9 @@
     repo: "{{ item.repo }}"
     dest: "{{ item.dest }}"
     version: master
-    update: no
+    update: false
   become_user: "{{ rails_app_user }}"
+  become: true
   with_items:
     - { repo: "https://github.com/rbenv/rbenv.git", dest: "/home/{{ rails_app_user }}/.rbenv" }
     - { repo: "https://github.com/rbenv/ruby-build.git", dest: "/home/{{ rails_app_user }}/.rbenv/plugins/ruby-build" }
@@ -65,8 +71,8 @@
     state: directory
     owner: "{{ rails_app_user }}"
     group: "{{ rails_app_user }}"
-    mode: 0755
-    recurse: yes
+    mode: "0755"
+    recurse: true
   become: true
   tags:
     - ruby
@@ -77,7 +83,7 @@
     dest: /etc/profile.d/rbenv.sh
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
   become: true
 
 - name: Ensure .bash_profile and .bashrc are owned by the correct user
@@ -85,7 +91,7 @@
     path: "{{ item }}"
     owner: "{{ rails_app_user }}"
     group: "{{ rails_app_user }}"
-    mode: 0644
+    mode: "0644"
   become: true
   with_items:
     - "/home/{{ rails_app_user }}/.bash_profile"
@@ -94,12 +100,15 @@
     - ruby
 
 - name: Ensure rbenv initialization in .bash_profile and .bashrc
+  become: true
+  tags:
+    - ruby
   block:
     - name: Add rbenv initialization to .bash_profile
       ansible.builtin.lineinfile:
         path: "/home/{{ rails_app_user }}/.bash_profile"
         line: "{{ item }}"
-        create: yes
+        create: true
         state: present
       with_items:
         - 'export PATH="/home/{{ rails_app_user }}/.rbenv/bin:$PATH"'
@@ -110,22 +119,21 @@
       ansible.builtin.lineinfile:
         path: "/home/{{ rails_app_user }}/.bashrc"
         line: "{{ item }}"
-        create: yes
+        create: true
         state: present
       with_items:
         - 'export PATH="/home/{{ rails_app_user }}/.rbenv/bin:$PATH"'
         - 'export RBENV_ROOT="/home/{{ rails_app_user }}/.rbenv"'
         - 'eval "$(rbenv init -)"'
-  become: true
-  tags:
-    - ruby
 
 - name: Install Ruby version using rbenv
   ansible.builtin.shell: |
     source /home/{{ rails_app_user }}/.bash_profile
     rbenv install {{ rails_app_ruby_version }} -s
     rbenv rehash
+  become: true
   become_user: "{{ rails_app_user }}"
+  changed_when: false
   tags:
     - ruby
 
@@ -133,6 +141,7 @@
   ansible.builtin.command: >
     bash -c "source /home/{{ rails_app_user }}/.bash_profile && rbenv global"
   become_user: "{{ rails_app_user }}"
+  become: true
   register: current_ruby_version
   changed_when: false
 
@@ -141,23 +150,28 @@
     source /home/{{ rails_app_user }}/.bash_profile
     rbenv global {{ ruby_version }}
     rbenv rehash
+  become: true
   become_user: "{{ rails_app_user }}"
   when: current_ruby_version.stdout != ruby_version
+  changed_when: false
   tags:
     - ruby
 
 - name: Set fact for bundler check
-  command: "/home/{{ rails_app_user }}/.rbenv/shims/bundle -v"
+  ansible.builtin.command: "/home/{{ rails_app_user }}/.rbenv/shims/bundle -v"
   become_user: "{{ rails_app_user }}"
+  become: true
   register: bundler_version_check
+  changed_when: false
   ignore_errors: true
   tags:
     - ruby
 
 - name: Install Bundler gem if missing or incorrect version
-  command: "/home/{{ rails_app_user }}/.rbenv/shims/gem install bundler -v {{ bundler_version }}"
+  ansible.builtin.command: "/home/{{ rails_app_user }}/.rbenv/shims/gem install bundler -v {{ bundler_version }}"
   become_user: "{{ rails_app_user }}"
+  become: true
+  changed_when: false
   when: bundler_version_check.rc != 0
   tags:
     - ruby
-

@@ -22,7 +22,7 @@
 - name: Check current node version
   ansible.builtin.shell: node --version 2>&1
   register: installed_node_version
-  failed_when: false  # noqa 301
+  failed_when: false
   changed_when: false
 
 - name: Remove old versions of node
@@ -35,6 +35,9 @@
 - name: Refresh dnf metadata
   ansible.builtin.command:
     cmd: dnf makecache --refresh
+  register: dnf_makecache_result
+  changed_when: dnf_makecache_result.rc != 0
+  not_changed_when: dnf_makecache_result.rc == 0
   when: installed_node_version.stdout is not regex('v' ~ rails_app_nodejs_major_version | string ~ '.*')
 
 - name: Download and execute NodeSource setup script
@@ -53,13 +56,13 @@
   ansible.builtin.dnf:
     name: "nodejs-{{ nodejs_version }}"
     state: present
-    update_cache: yes
+    update_cache: true
     enablerepo: nodesource-nodejs
-    nobest: yes
+    nobest: true
 
 - name: Ensure Passenger is installed after node removal
   ansible.builtin.dnf:
-    name: 
+    name:
       - passenger
       - mod_passenger
     state: present
@@ -73,7 +76,7 @@
     update_cache: true
 
 - name: Install yarn node package if this project needs it
-  ansible.builtin.npm:
+  community.general.npm:
     name: yarn
     global: true
     state: present
