@@ -37,7 +37,6 @@
     cmd: dnf makecache --refresh
   register: dnf_makecache_result
   changed_when: dnf_makecache_result.rc != 0
-  not_changed_when: dnf_makecache_result.rc == 0
   when: installed_node_version.stdout is not regex('v' ~ rails_app_nodejs_major_version | string ~ '.*')
 
 - name: Download and execute NodeSource setup script
@@ -54,7 +53,7 @@
 
 - name: Install Node.js using dnf
   ansible.builtin.dnf:
-    name: "nodejs-{{ nodejs_version }}"
+    name: "nodejs-{{ rails_app_nodejs_version }}"
     state: present
     update_cache: true
     enablerepo: nodesource-nodejs

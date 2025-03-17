@@ -16,7 +16,7 @@
       dest: "{{ rails_app_old_fqdn_ssl_key_path | default(False) }}"
   when: item.dest
   become: true
-  notify: restart apache
+  notify: Restart apache
   tags:
     - rails_app
     - passenger

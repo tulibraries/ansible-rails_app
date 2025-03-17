@@ -13,7 +13,7 @@ Header always set X-Frame-Options SAMEORIGIN
 Header always set X-Content-Type-Options nosniff
 
 <VirtualHost *:80>
-    ServerName {{ fqdn | default(ansible_fqdn) }}
+    ServerName {{ rails_app_fqdn | default(ansible_fqdn) }}
 
     {% if rails_app_force_ssl %}
     RewriteEngine On
@@ -23,7 +23,7 @@ Header always set X-Content-Type-Options nosniff
 
 #  Copied over from cob role, in case needed instead of above
 #    {% if rails_app_force_ssl %}
-#      RedirectMatch permanent (.*) https://{{ fqdn | default(ansible_fqdn) }}/$1
+#      RedirectMatch permanent (.*) https://{{ rails_app_fqdn | default(ansible_fqdn) }}/$1
 #    {% endif %}
 
     # Tell Apache and Passenger where your app's 'public' directory is

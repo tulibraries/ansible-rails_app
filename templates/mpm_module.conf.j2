@@ -3,7 +3,7 @@
 
 # prefork MPM: Implements a non-threaded, pre-forking web server
 # See: http://httpd.apache.org/docs/2.4/mod/prefork.html
-{% if mpm_module == "prefork" %}
+{% if rails_app_mpm_module == "prefork" %}
 LoadModule mpm_prefork_module modules/mod_mpm_prefork.so
 {% else %}
 #LoadModule mpm_prefork_module modules/mod_mpm_prefork.so
@@ -12,7 +12,7 @@ LoadModule mpm_prefork_module modules/mod_mpm_prefork.so
 # worker MPM: Multi-Processing Module implementing a hybrid
 # multi-threaded multi-process web server
 # See: http://httpd.apache.org/docs/2.4/mod/worker.html
-{% if mpm_module == "worker" %}
+{% if rails_app_mpm_module == "worker" %}
 LoadModule mpm_worker_module modules/mod_mpm_worker.so
 {% else %}
 #LoadModule mpm_worker_module modules/mod_mpm_worker.so
@@ -22,7 +22,7 @@ LoadModule mpm_worker_module modules/mod_mpm_worker.so
 # threads only for connections with active processing
 # See: http://httpd.apache.org/docs/2.4/mod/event.html
 
-{% if mpm_module == "event" %}
+{% if rails_app_mpm_module == "event" %}
 LoadModule mpm_event_module modules/mod_mpm_event.so
 {% else %}
 #LoadModule mpm_event_module modules/mod_mpm_event.so

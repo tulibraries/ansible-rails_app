@@ -5,7 +5,7 @@
     path: /etc/httpd/conf.modules.d/00-passenger.conf
     line: "LoadModule passenger_module modules/mod_passenger.so"
     create: true
-  notify: restart apache
+  notify: Restart apache
   become: true
 
 - name: Enable and start Apache service
@@ -21,7 +21,7 @@
     dest: /etc/httpd/conf.d/applications.conf
     mode: '0644'
   become: true
-  notify: restart apache
+  notify: Restart apache
   tags:
     - rails_app
     - passenger
@@ -57,7 +57,7 @@
     dest: /etc/httpd/conf.modules.d/00-mpm.conf
     mode: "0644"
   become: true
-  notify: restart apache
+  notify: Restart apache
   tags:
     - rails_app
     - passenger
@@ -68,7 +68,7 @@
     dest: /etc/httpd/conf.d/applications/{{ rails_app_name }}.conf-fragment
     mode: "0644"
   become: true
-  notify: restart apache
+  notify: Restart apache
   tags:
     - rails_app
     - passenger

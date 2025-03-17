@@ -6,10 +6,9 @@
   args:
     chdir: "{{ rails_app_install_path }}"
   become: true
-  notify: deploy tasks
+  notify: Deploy tasks
   register: yarn_result
   changed_when: "'installed' in yarn_result.stdout or 'up to date' not in yarn_result.stdout"
-  not_changed_when: "'up to date' in yarn_result.stdout"
   when: rails_app_use_webpack is defined and rails_app_use_webpack
   tags:
     - app
@@ -26,10 +25,9 @@
   become_user: "{{ rails_app_user }}"
   register: deploy_result
   changed_when: "'clean' in deploy_result.stdout or 'compiled' in deploy_result.stdout"
-  not_changed_when: "'up to date' in deploy_result.stdout"
   when: rails_app_is_webserver
   notify:
-    - restart passenger app
+    - Restart passenger app
     - migrate db
   tags:
     - rails_app
@@ -46,9 +44,8 @@
   run_once: true
   register: migrate_result
   changed_when: "'migrated' in migrate_result.stdout"
-  not_changed_when: "'No migrations are pending' in migrate_result.stdout"
   when: rails_app_is_webserver
-  notify: restart passenger app
+  notify: Restart passenger app
   tags:
     - rails_app
 
@@ -61,7 +58,6 @@
   become_user: "{{ rails_app_user }}"
   register: restart_result
   changed_when: "'App restart successful' in restart_result.stdout or 'restarted' in restart_result.stdout"
-  not_changed_when: "'No change' in restart_result.stdout or 'already running' in restart_result.stdout"
   when: rails_app_is_webserver
   failed_when: false
   tags:

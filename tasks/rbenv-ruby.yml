@@ -148,11 +148,11 @@
 - name: Set global Ruby version if needed
   ansible.builtin.shell: |
     source /home/{{ rails_app_user }}/.bash_profile
-    rbenv global {{ ruby_version }}
+    rbenv global {{ rails_app_ruby_version }}
     rbenv rehash
   become: true
   become_user: "{{ rails_app_user }}"
-  when: current_ruby_version.stdout != ruby_version
+  when: current_ruby_version.stdout != rails_app_ruby_version
   changed_when: false
   tags:
     - ruby
@@ -168,7 +168,7 @@
     - ruby
 
 - name: Install Bundler gem if missing or incorrect version
-  ansible.builtin.command: "/home/{{ rails_app_user }}/.rbenv/shims/gem install bundler -v {{ bundler_version }}"
+  ansible.builtin.command: "/home/{{ rails_app_user }}/.rbenv/shims/gem install bundler -v {{ rails_app_bundler_version }}"
   become_user: "{{ rails_app_user }}"
   become: true
   changed_when: false
