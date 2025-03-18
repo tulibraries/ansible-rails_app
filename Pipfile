@@ -8,9 +8,10 @@ pytest = "*"
 docker = "*"
 codecov = "*"
 testinfra = "*"
+ansible-lint = "*"
 
 [packages]
-ansible = "==10.7.0"
+ansible = "*"
 ansible-core = "*"
 cryptography = "*"
 molecule = "*"

@@ -8,11 +8,11 @@
 
 - name: Ensure rbenv versions directory is owned by the correct user
   ansible.builtin.file:
-    path: "/home/{{ rails_app_user }}/.rbenv/versions/{{ ruby_version }}"
+    path: "/home/{{ rails_app_user }}/.rbenv/versions/{{ rails_app_ruby_version }}"
     state: directory
     owner: "{{ rails_app_user }}"
     group: "{{ rails_app_user }}"
-    recurse: yes
+    recurse: true
   become: true
 
 - name: Checkout the Rails app code from source control
@@ -26,8 +26,8 @@
   become: true
   become_user: "{{ rails_app_user }}"
   notify:
-    - restart passenger app
-    - deploy tasks
+    - Restart passenger app
+    - Deploy tasks
   tags:
     - rails_app
 
@@ -45,8 +45,8 @@
     - rails_app
 
 - name: Optionally manage Bundler version if required
-  ansible.builtin.command: bash -lc 'gem install bundler -v {{ bundler_version }}'
-  when: bundler_version is defined and bundler_present.rc != 0
+  ansible.builtin.command: bash -lc 'gem install bundler -v {{ rails_app_bundler_version }}'
+  changed_when: bundler_version is defined and bundler_present.rc != 0
   become: true
   become_user: "{{ rails_app_user }}"
   tags:
@@ -78,6 +78,8 @@
   ansible.builtin.command:
     cmd: bash -lc 'bundle config set --without test development'
   become: true
+  register: result
+  changed_when: "'test' in result.stdout or 'development' in result.stdout"
   become_user: "{{ rails_app_user }}"
   tags:
     - rails_app
@@ -94,9 +96,9 @@
   environment:
     RAILS_ENV: "{{ rails_app_env }}"
   notify:
-    - restart passenger app
-    - deploy yarn
-    - deploy tasks
+    - Restart passenger app
+    - Deploy yarn
+    - Deploy tasks
   tags:
     - rails_app
 
@@ -108,7 +110,7 @@
   become: true
   become_user: "{{ rails_app_user }}"
   notify:
-    - restart passenger app
+    - Restart passenger app
   tags:
     - rails_app
 
@@ -120,7 +122,7 @@
   become: true
   become_user: "{{ rails_app_user }}"
   notify:
-    - restart passenger app
+    - Restart passenger app
   tags:
     - rails_app
 
@@ -131,13 +133,13 @@
   become: true
   become_user: "{{ rails_app_user }}"
   notify:
-    - restart passenger app
+    - Restart passenger app
   tags:
     - rails_app
 
 - name: Check if an inventory env file exists in the app
   ansible.builtin.stat:
-    path: "{{ rails_app_install_path }}/.env.{{ inventory_shortname }}"
+    path: "{{ rails_app_install_path }}/.env.{{ rails_app_inventory_shortname }}"
   register: inventory_env
   changed_when: false
   tags:
@@ -146,18 +148,19 @@
 - name: Create symlink to inventory env file if it exists
   ansible.builtin.file:
     state: link
-    src: "{{ rails_app_install_path }}/.env.{{ inventory_shortname }}"
+    src: "{{ rails_app_install_path }}/.env.{{ rails_app_inventory_shortname }}"
     dest: "{{ rails_app_install_path }}/.env"
   when: inventory_env.stat.exists
   become: true
   become_user: "{{ rails_app_user }}"
   notify:
-    - restart passenger app
+    - Restart passenger app
   tags:
     - rails_app
 
-- ansible.builtin.include_tasks: db.yml
-  when: using_postgres
+- name: "Run the db tasks"
+  ansible.builtin.include_tasks: db.yml
+  when: rails_app_using_postgres
 
 - name: Trigger deploy tasks if vendor/bundle does not exist
   ansible.builtin.stat:
@@ -165,7 +168,7 @@
   register: vendor_bundle
   changed_when: "vendor_bundle.stat.isdir is undefined"
   notify:
-    - deploy tasks
+    - Deploy tasks
   tags:
     - rails_app
 
@@ -175,6 +178,6 @@
   register: public_assets
   changed_when: "public_assets.stat.isdir is undefined"
   notify:
-    - deploy tasks
+    - Deploy tasks
   tags:
     - rails_app

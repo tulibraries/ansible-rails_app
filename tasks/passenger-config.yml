@@ -1,18 +1,18 @@
 ---
 
 - name: Ensure Passenger module is loaded
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/httpd/conf.modules.d/00-passenger.conf
     line: "LoadModule passenger_module modules/mod_passenger.so"
-    create: yes
-  notify: restart apache
+    create: true
+  notify: Restart apache
   become: true
 
 - name: Enable and start Apache service
-  systemd:
+  ansible.builtin.systemd:
     name: httpd
     state: started
-    enabled: yes
+    enabled: true
   become: true
 
 - name: Template Apache config for all.yml applications on port 80
@@ -21,13 +21,14 @@
     dest: /etc/httpd/conf.d/applications.conf
     mode: '0644'
   become: true
-  notify: restart apache
+  notify: Restart apache
   tags:
     - rails_app
     - passenger
 
-- ansible.builtin.include_tasks: ssl.yml
-  when: app_use_ssl
+- name: Include ssl tasks
+  ansible.builtin.include_tasks: ssl.yml
+  when: rails_app_use_ssl
   tags:
     - ssl
 
@@ -54,9 +55,9 @@
   ansible.builtin.template:
     src: mpm_module.conf.j2
     dest: /etc/httpd/conf.modules.d/00-mpm.conf
-    mode: 0644
+    mode: "0644"
   become: true
-  notify: restart apache
+  notify: Restart apache
   tags:
     - rails_app
     - passenger
@@ -65,9 +66,9 @@
   ansible.builtin.template:
     src: conf-fragment.j2
     dest: /etc/httpd/conf.d/applications/{{ rails_app_name }}.conf-fragment
-    mode: 0644
+    mode: "0644"
   become: true
-  notify: restart apache
+  notify: Restart apache
   tags:
     - rails_app
     - passenger

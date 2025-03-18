@@ -2,7 +2,7 @@ Alias {{ rails_app_url_base_path }} {{ rails_app_install_path }}/public/
   <Location {{ rails_app_url_base_path}} >
     PassengerBaseURI {{ rails_app_url_base_path }}
     PassengerAppRoot {{ rails_app_install_path }}
-    PassengerRuby /home/{{ rails_app_user }}/.rbenv/versions/{{ ruby_version }}/bin/ruby
+    PassengerRuby /home/{{ rails_app_user }}/.rbenv/versions/{{ rails_app_ruby_version }}/bin/ruby
   </Location>
   <Directory {{ rails_app_install_path }}/public>
     Allow from all

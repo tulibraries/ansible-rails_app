@@ -2,21 +2,21 @@
 
 - name: Copy the SSL cert and key to the expected locations
   ansible.builtin.copy:
-    src: "{{ inventory_shortname }}/{{ item.src }}"
+    src: "{{ rails_app_inventory_shortname }}/{{ item.src }}"
     dest: "{{ item.dest }}"
-    mode: 0644
+    mode: "0644"
   with_items:
     - src: server.crt
-      dest: "{{ app_ssl_cert_path }}"
+      dest: "{{ rails_app_ssl_cert_path }}"
     - src: server.key
-      dest: "{{ app_ssl_key_path }}"
+      dest: "{{ rails_app_ssl_key_path }}"
     - src: old_fqdn_server.crt
-      dest: "{{ app_old_fqdn_ssl_cert_path | default(False) }}"
+      dest: "{{ rails_app_old_fqdn_ssl_cert_path | default(False) }}"
     - src: old_fqdn_server.key
-      dest: "{{ app_old_fqdn_ssl_key_path | default(False) }}"
+      dest: "{{ rails_app_old_fqdn_ssl_key_path | default(False) }}"
   when: item.dest
   become: true
-  notify: restart apache
+  notify: Restart apache
   tags:
     - rails_app
     - passenger
@@ -25,8 +25,8 @@
 - name: Copy intermediate cert when required
   ansible.builtin.copy:
     src: globalsign-intermediate.crt
-    dest: "{{ app_ssl_intermediate_path }}"
-    mode: 0644
+    dest: "{{ rails_app_ssl_intermediate_path }}"
+    mode: "0644"
   become: true
   when: app_use_intermediate_cert | default(False)
   notify: restart apache
@@ -39,7 +39,7 @@
   ansible.builtin.template:
     src: ssl.conf.j2
     dest: /etc/httpd/conf.d/ssl.conf
-    mode: 0644
+    mode: "0644"
   become: true
   notify: restart apache
   tags:
