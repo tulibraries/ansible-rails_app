@@ -6,6 +6,7 @@
   args:
     chdir: "{{ rails_app_install_path }}"
   become: true
+  become_user: "{{ rails_app_user }}"
   notify: Deploy tasks
   register: yarn_result
   changed_when: "'installed' in yarn_result.stdout or 'up to date' not in yarn_result.stdout"
