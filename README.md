@@ -16,7 +16,7 @@ These must be defined in your playbook for this role to work.
 
 `rails_app_git_branch`: the branch or tag to use 
 
-`rails_app_prod_secret`: EXTREMELY_LONG_SECRET_VALUE` # This should be vaulted.
+`rails_master_key`: SECRET_VALUE` # This should be vaulted.
 
 ### Optional Variables
 
