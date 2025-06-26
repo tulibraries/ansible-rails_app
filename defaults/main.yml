@@ -27,6 +27,7 @@ rails_app_ruby_path: /home/{{ rails_app_user }}/.rbenv/versions/{{ rails_app_rub
 rails_app_bundle_exe: "{{ rails_app_ruby_path }}/bin/bundle"
 rails_app_gem_path: "{{ rails_app_ruby_path }}/lib/ruby/gems"
 rails_app_url_base_path: "/"
+rails_app_default_config: []
 
 # Override to add custom config files from templates
 rails_app_additional_config: []
