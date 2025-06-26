@@ -102,30 +102,6 @@
   tags:
     - rails_app
 
-- name: Add basic Rails configuration files
-  ansible.builtin.template:
-    src: "{{ item }}.j2"
-    dest: "{{ rails_app_install_path }}/config/{{ item }}"
-  with_items: "{{ rails_app_default_config }}"
-  become: true
-  become_user: "{{ rails_app_user }}"
-  notify:
-    - Restart passenger app
-  tags:
-    - rails_app
-
-- name: Add additional Rails configuration files
-  ansible.builtin.template:
-    src: "{{ item }}.j2"
-    dest: "{{ rails_app_install_path }}/config/{{ item }}"
-  with_items: "{{ rails_app_additional_config }}"
-  become: true
-  become_user: "{{ rails_app_user }}"
-  notify:
-    - Restart passenger app
-  tags:
-    - rails_app
-
 - name: Create a .env file in the root of the app
   ansible.builtin.template:
     dest: "{{ rails_app_install_path }}/.env.local"
