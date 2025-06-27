@@ -22,6 +22,7 @@
   become: true
   become_user: "{{ rails_app_user }}"
   when: rails_app_use_webpack is defined and rails_app_use_webpack
+  changed_when: false
   tags:
     - app
 
