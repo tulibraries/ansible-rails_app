@@ -14,7 +14,7 @@
   tags:
     - app
 
-- name: yarn:build
+- name: Yarn Build
   ansible.builtin.shell: >
     bash -lc 'RAILS_ENV={{ rails_app_env }} NODE_ENV=production yarn build'
   args:
