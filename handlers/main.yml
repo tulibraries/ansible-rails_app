@@ -47,7 +47,8 @@
 
 - name: Migrate db
   ansible.builtin.command: >
-  bash -lc 'RAILS_ENV={{ rails_app_env }} RAILS_MASTER_KEY={{ rails_master_key }} bundle exec rails {{ item }}'  args:
+    bash -lc 'RAILS_ENV={{ rails_app_env }} RAILS_MASTER_KEY={{ rails_master_key }} bundle exec rails {{ item }}'
+  args:
     chdir: "{{ rails_app_install_path }}"
   with_items:
     - db:migrate
