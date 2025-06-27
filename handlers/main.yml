@@ -14,9 +14,20 @@
   tags:
     - app
 
+- name: yarn:build
+  ansible.builtin.shell: >
+    bash -lc 'RAILS_ENV={{ rails_app_env }} NODE_ENV=production yarn build'
+  args:
+    chdir: "{{ rails_app_install_path }}"
+  become: true
+  become_user: "{{ rails_app_user }}"
+  when: rails_app_use_webpack is defined and rails_app_use_webpack
+  tags:
+    - app
+
 - name: Deploy tasks
   ansible.builtin.command: >
-    bash -lc 'RAILS_ENV={{ rails_app_env }} SECRET_KEY_BASE={{ rails_app_key }} bundle exec rails {{ item }}'
+    bash -lc 'RAILS_ENV={{ rails_app_env }} RAILS_MASTER_KEY={{ rails_master_key }} bundle exec rails {{ item }}'
   args:
     chdir: "{{ rails_app_install_path }}"
   with_items:
@@ -35,8 +46,7 @@
 
 - name: Migrate db
   ansible.builtin.command: >
-    bash -lc 'RAILS_ENV={{ rails_app_env }} SECRET_KEY_BASE={{ rails_app_key }} bundle exec rails {{ item }}'
-  args:
+  bash -lc 'RAILS_ENV={{ rails_app_env }} RAILS_MASTER_KEY={{ rails_master_key }} bundle exec rails {{ item }}'  args:
     chdir: "{{ rails_app_install_path }}"
   with_items:
     - db:migrate
