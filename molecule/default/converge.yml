@@ -39,8 +39,7 @@
         description: "CentOS Stream 9 - CRB"
         baseurl: "https://mirror.stream.centos.org/9-stream/CRB/$basearch/os/"
         enabled: yes
-        gpgcheck: yes
-        gpgkey: "file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial"
+        gpgcheck: no
 
     - name: Remove conflicting curl-minimal package
       become: true
