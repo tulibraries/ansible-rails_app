@@ -30,12 +30,10 @@
     - ruby
 
 - name: Check existing Git safe directories
-  community.general.git_config:
-    name: safe.directory
-    scope: global
+  ansible.builtin.set_fact:
+    git_safe_dirs: "{{ lookup('community.general.git_config', 'safe.directory', scope='global') | default([], true) }}"
   become: true
   become_user: "{{ rails_app_user }}"
-  register: git_safe_dirs
 
 - name: Mark rbenv and ruby-build directories as safe for Git
   community.general.git_config:
