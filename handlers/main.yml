@@ -27,8 +27,11 @@
     - app
 
 - name: Deploy tasks
-  ansible.builtin.command: >
-    bash -lc 'RAILS_ENV={{ rails_app_env }} RAILS_MASTER_KEY={{ rails_master_key }} bundle exec rails {{ item }}'
+  ansible.builtin.command:
+    argv:
+      - bash
+      - -lc
+      - bundle exec rails {{ item }}
   args:
     chdir: "{{ rails_app_install_path }}"
   with_items:
@@ -42,12 +45,18 @@
   notify:
     - Restart passenger app
     - migrate db
+  environment:
+    RAILS_ENV: "{{ rails_app_env }}"
+    RAILS_MASTER_KEY: "{{ rails_master_key | trim }}"
   tags:
     - rails_app
 
 - name: Migrate db
-  ansible.builtin.command: >
-    bash -lc 'RAILS_ENV={{ rails_app_env }} RAILS_MASTER_KEY={{ rails_master_key }} bundle exec rails {{ item }}'
+  ansible.builtin.command:
+    argv:
+      - bash
+      - -lc
+      - bundle exec rails {{ item }}
   args:
     chdir: "{{ rails_app_install_path }}"
   with_items:
@@ -59,6 +68,9 @@
   changed_when: "'migrated' in migrate_result.stdout"
   when: rails_app_is_webserver
   notify: Restart passenger app
+  environment:
+    RAILS_ENV: "{{ rails_app_env }}"
+    RAILS_MASTER_KEY: "{{ rails_master_key | trim }}"
   tags:
     - rails_app
 
