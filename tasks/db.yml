@@ -9,8 +9,6 @@
   become_user: postgres
   delegate_to: "{{ rails_app_db_machine | default(omit, true) }}"
   changed_when: pgq.query_result[0]['to_regclass'] is none
-  not_changed_when: pgq.query_result[0]['to_regclass'] is not none
-  when: rails_app_using_postgres
   tags:
     - rails_app
     - db
@@ -24,7 +22,6 @@
   become_user: "{{ rails_app_user }}"
   register: db_schema_load_result
   changed_when: "'Schema loaded' in db_schema_load_result.stdout or 'created' in db_schema_load_result.stdout"
-  not_changed_when: "'schema already exists' in db_schema_load_result.stdout or 'already up to date' in db_schema_load_result.stdout"
   when: rails_app_using_postgres and pgq.query_result[0]['to_regclass'] is none
   tags:
     - rails_app

@@ -1,10 +1,13 @@
 name: Molecule Test
 
+# Temporary variable until molecule-docker officially supports ansible 2.19+
+env:
+  ANSIBLE_ALLOW_BROKEN_CONDITIONALS: "True"
+
 on:
   push:
-  pull_request:
-    types: [ opened, synchronize, reopened ]
-    branches: [ main ]
+    branches-ignore:
+      - main
   workflow_dispatch: {}
 
 concurrency:

@@ -11,14 +11,12 @@ testinfra = "*"
 ansible-lint = "*"
 
 [packages]
-ansible = "*"
+ansible = "==12.1.0"
 ansible-core = "*"
 cryptography = "*"
 molecule = "*"
 molecule-docker = "*"
-
-# Remove once this is fixed: https://github.com/ansible-collections/community.docker/issues/868#issuecomment-2124979976
-requests = "==2.32.4"
+requests = "*"
 
 [requires]
 python_version = "3.12"
