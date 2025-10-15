@@ -29,13 +29,22 @@
   tags:
     - ruby
 
-- name: Check existing Git safe directories
-  community.general.git_config:
-    name: safe.directory
-    scope: global
-  become: true
-  become_user: "{{ rails_app_user }}"
-  register: git_safe_dirs
+- name: Check existing Git safe directories (lint + molecule safe)
+  block:
+    - name: Attempt to read safe.directory entries
+      ansible.builtin.shell: |
+        git config --global --get-all safe.directory || true
+      args:
+        _uses_shell: true
+        executable: /bin/bash
+      become: true
+      become_user: "{{ rails_app_user }}"
+      register: git_safe_dirs_cmd
+      changed_when: false
+
+    - name: Parse safe.directory output into list
+      ansible.builtin.set_fact:
+        git_safe_dirs: "{{ git_safe_dirs_cmd.stdout_lines | default([]) }}"
 
 - name: Mark rbenv and ruby-build directories as safe for Git
   community.general.git_config:
