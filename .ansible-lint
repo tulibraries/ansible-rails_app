@@ -3,4 +3,4 @@ skip_list:
   - '106'
   - '208'
   - yaml[brackets]
-  - args[module]
+  - command-instead-of-module
