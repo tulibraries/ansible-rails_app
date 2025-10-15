@@ -14,7 +14,7 @@
     rails_app_use_webpack: true
     rails_app_git_url: https://github.com/tulibraries/rails-nihilist
     rails_app_git_branch: main
-    rails_master_key: SECRET_VALUE
+    rails_master_key: "0123456789abcdef0123456789abcdef"
     rails_app_bundler_configs:
       - key: "NEEDS_FLAGS"
         value: "--with-flags"
@@ -29,19 +29,30 @@
 
   pre_tasks:
     - name: Ensure rails app user is present.
-      user:
+      ansible.builtin.user:
         name: "{{ rails_app_user }}"
         state: present
+
+    - name: Enable CentOS Stream 9 CodeReady Builder (CRB) repo
+      ansible.builtin.yum_repository:
+        name: centos-stream-crb
+        description: "CentOS Stream 9 - CRB"
+        baseurl: "https://mirror.stream.centos.org/9-stream/CRB/$basearch/os/"
+        enabled: yes
+        gpgcheck: no
+
     - name: Remove conflicting curl-minimal package
       become: true
       dnf:
         name: curl-minimal
         state: absent
       when: ansible_os_family == "RedHat"
+
     - name: Enable CRB repository
       ansible.builtin.command: dnf config-manager --set-enabled crb
       become: true
       changed_when: false
+
   roles:
   - role: tulibraries.ansible_role_passenger_apache
   - role: ansible-rails_app
