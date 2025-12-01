@@ -1,5 +1,8 @@
 name: Molecule Test
 
+permissions:
+  contents: read
+
 # Temporary variable until molecule-docker officially supports ansible 2.19+
 env:
   ANSIBLE_ALLOW_BROKEN_CONDITIONALS: "True"
@@ -16,7 +19,7 @@ concurrency:
 
 jobs:
   molecule:
-    runs-on: [ self-hosted, systemd-runner ]
+    runs-on: [ self-hosted ]
     timeout-minutes: 30
     strategy:
       matrix:
@@ -42,3 +45,13 @@ jobs:
 
       - name: Molecule test
         run: pipenv run molecule test
+
+  notify_on_failure:
+    if: failure()
+    needs: [molecule]
+    uses: tulibraries/.github/.github/workflows/slack-notify.yml@main
+    with:
+      repo: ${{ github.repository }}
+      run_id: ${{ github.run_id }}
+      workflow: ${{ github.workflow }}
+    secrets: inherit
